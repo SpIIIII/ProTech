@@ -13,6 +13,7 @@ from datetime import timedelta
 
 
 class Main(tk.Frame):
+
     def __init__ (self, root):
         super().__init__ (root)
         self.db = db
@@ -154,7 +155,7 @@ class Main(tk.Frame):
             #print('in ToDo',self.calculateOneDay1(row,self.now1))
             if self.calculateOneDay1(row,self.now1):
                 self.todayToDo.append(row[1])
-                self.todayToDo.append(' ')
+                #self.todayToDo.append(' ')
         
         return self.todayToDo
 
@@ -1188,8 +1189,10 @@ class ShowOneDay(tk.Toplevel):
         self.main=app
         self.db=db
         self.show_onedaypunkt()
+        
+    
 
-    def wrap(string, lenght=8):
+    def myWrap(string, lenght=8):
         return '\n'.join(textwrap.wrap(string, lenght))
 
     
@@ -1197,11 +1200,13 @@ class ShowOneDay(tk.Toplevel):
         self.title("Вывести в Exel")
         self.geometry("400x600")
 
+        self.style=ttk.Style(self)
+        self.style.configure('mystyle.Treeview',rowheight=110)
         
-        self.sctribeTree=ttk.Treeview(self,columns=('id','description'),height=30,show='headings')
-
-        self.sctribeTree.column('id',width=80,anchor=tk.CENTER)
-        self.sctribeTree.column('description',width=320,anchor=tk.CENTER)
+        self.sctribeTree=ttk.Treeview(self,columns=('id','description'),height=40,show='headings',style="mystyle.Treeview")
+       
+        self.sctribeTree.column('id',width=60,anchor=tk.N)
+        self.sctribeTree.column('description',width=340,anchor=tk.N)
         self.sctribeTree.heading('id',text='пункт')
         self.sctribeTree.heading('description',text='описание')
         self.sctribeTree.pack(side=BOTTOM,fill=BOTH, expand=YES)
@@ -1211,16 +1216,11 @@ class ShowOneDay(tk.Toplevel):
          
         
         self.sctribeTree.configure(yscrollcommand=self.scrollbar.set)
-
-        i=0
-        labels=[]
-        massages=[]
         
+        i=0
+        print(self.main.todayPunkt())
         for x in self.main.todayPunkt():
-            labels.append(Label(self,text=x))
-            #massages.append(Message(self,text=str(db.read_data(str(x)))[3:-6],width=250))
-            #self.sctribeTree.insert('','end',values=(x,str(db.read_data(str(x)))[3:-6]))
-            print(x)#,self.wrap((x,str(db.read_data(str(x)))[3:-6])))
+            item = self.sctribeTree.insert("", "end", values=(x, '\n'.join(textwrap.wrap(str(db.read_data(str(x)))[3:-6], 45))))
             
 
             i+=1
@@ -1277,6 +1277,7 @@ if __name__ ==  "__main__":
     root.title("Техпроцесс")
     root.geometry("580x350+300+220")
     #root.resizable(False,False)
+    
     root.minsize(580,350)
     root.mainloop()
 
