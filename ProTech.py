@@ -10,6 +10,7 @@ import datetime
 #from calendar import monthrange
 import calendar
 from datetime import timedelta
+from updater import update
 
 
 class Main(tk.Frame):
@@ -18,13 +19,13 @@ class Main(tk.Frame):
         super().__init__ (root)
         self.db = db
         self.init_main()
+        
 
         
         
     def init_main(self):
-        
-        
         self.now1=datetime.datetime.now()
+        self.updater = update.Update()
         '''
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
@@ -47,6 +48,9 @@ class Main(tk.Frame):
         someButton2 = ttk.Button(noneedframe,text="Обновить",command=self.view_records1)
         someButton2.pack(side="left")
         #someButton2.bind('<Button-1>', lambda event2: print(self.db.read_data('п 1.5')))
+
+        someButton3 = ttk.Button(noneedframe,text="Update",command=self.updater.start)
+        someButton3.pack(side="left")
         
         someButton3 = ttk.Button(noneedframe,text="в Exel",command=self.open_Choice)#,command = self.caclulateExel)
         someButton3.pack(side="right")
@@ -218,7 +222,7 @@ class Main(tk.Frame):
             
             elif str(rowver[3]) == str(' раз 12 месяцев'):
                  if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%52==0:
-                     if (47+now_week+associationforMonth[row[5]]+row[10])%52==0:
+                     if (47+now_week+associationforMonth[rowver[5]]+rowver[10])%52==0:
                         #print('in 12 month', associationforMonth[rowver[5]],now_month)
                         if association[rowver[4]]==now_weekday:
                             return(True)
@@ -1067,7 +1071,7 @@ class Choice(tk.Toplevel):
             
             elif str(rowver[3]) == str(' раз 12 месяцев'):
                 if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%52==0:
-                     if (47+now_week+associationforMonth[row[5]]+row[10])%52==0:
+                     if (47+now_week+associationforMonth[rowver[5]]+rowver[10])%52==0:
                         #print('in 12 month', associationforMonth[rowver[5]],now_month)
                         if association[rowver[4]]==now_weekday:
                             return(True)
@@ -1192,7 +1196,7 @@ class ShowOneDay(tk.Toplevel):
         
     
 
-    def myWrap(string, lenght=8):
+    def myWrap(self,string, lenght=8):
         return '\n'.join(textwrap.wrap(string, lenght))
 
     
