@@ -1,29 +1,13 @@
 
-# Created by https://www.gitignore.io/api/code,linux,python
-# Edit at https://www.gitignore.io/?templates=code,linux,python
+# Created by https://www.gitignore.io/api/code,python
+# Edit at https://www.gitignore.io/?templates=code,python
 
 ### Code ###
 .vscode/*
-settings.json
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-### Linux ###
-*~
-
-# temporary files which can be created if a process still has a handle open of a deleted file
-.fuse_hidden*
-
-# KDE directory preferences
-.directory
-
-# Linux trash folder which might appear on any partition or disk
-.Trash-*
-
-# .nfs files are created when an open file is removed but is still being accessed
-.nfs*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -130,4 +114,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# End of https://www.gitignore.io/api/code,linux,python
+# End of https://www.gitignore.io/api/code,python
+
+weekSchedule.db

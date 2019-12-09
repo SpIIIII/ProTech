@@ -19,7 +19,7 @@ class Update:
 
     def start(self):
         # if self.versions.remote_version > self.versions.local_version:
-        self.download()
+        print("it's New NEWER version")
    
 
     def download (self):
@@ -50,10 +50,7 @@ class Versions:
     def get_local_version(self) -> str:
         """   Get local version of program from version file
         """
-        with open('updater/version','r') as f:
-            version = f.read()
-        local_version = self.version_to_int(version)  
-        return local_version
+        return 'v1.0.0'
 
 
     def version_to_int (self, version_str:str) -> int:
