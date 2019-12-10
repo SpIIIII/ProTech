@@ -1,6 +1,7 @@
 
 import requests
 import platform
+import tempfile
 import re
 import os
 
@@ -8,7 +9,8 @@ import os
 class Update:
     def __init__ (self):
         self.url_of_sutup =   "http://68.183.208.74/mysetup.exe"
-        self.cwd = os.getcwd()
+        self.curent_folder = os.getcwd()
+        self.temp_folder = tempfile.gettempdir()
 
         if platform.system() == 'Windows':
             self.desktop_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop/')
@@ -18,14 +20,28 @@ class Update:
 
 
     def start(self):
-        # if self.versions.remote_version > self.versions.local_version:
-        print("it's New NEWER version")
+        if self.versions.remote_version > self.versions.local_version:
+            self.download()
+            self.run_setup()
+            self.close_curetn()
+
    
 
     def download (self):
         response = requests.get(self.url_of_sutup)
-        with open(self.cwd+'/tmp/ProTech setup.exe','wb') as f:
+        if not os.path.exists(self.temp_folder+'/protech'):
+                os.makedirs(self.temp_folder+'/protech')
+                self.folder_with_installer = self.temp_folder+'/protech'
+        with open(self.folder_with_installer+'/ProTech setup.exe','wb') as f:
             f.write(response.content)
+
+    def run_setup(self):
+        os.system(f'{self.folder_with_installer}/ProTech setup.exe')
+
+    def close_curetn(self):
+        os._exit(0)
+
+
 
 
 
@@ -50,7 +66,8 @@ class Versions:
     def get_local_version(self) -> str:
         """   Get local version of program from version file
         """
-        return 'v1.0.0'
+        local_version = 'v0.0.0'
+        return self.version_to_int(local_version)
 
 
     def version_to_int (self, version_str:str) -> int:
