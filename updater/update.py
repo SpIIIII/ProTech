@@ -8,9 +8,8 @@ import os
 
 class Update:
     def __init__ (self):
-        self.url_of_sutup =   "http://68.183.208.74/mysetup.exe"
+        self.url_of_sutup =   "http://68.183.208.74/ProTech_32.exe"
         self.curent_folder = os.getcwd()
-        self.temp_folder = tempfile.gettempdir()
 
         if platform.system() == 'Windows':
             self.desktop_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop/')
@@ -32,11 +31,11 @@ class Update:
         if not os.path.exists(self.temp_folder+'/protech'):
                 os.makedirs(self.temp_folder+'/protech')
                 self.folder_with_installer = self.temp_folder+'/protech'
-        with open(self.folder_with_installer+'/ProTech setup.exe','wb') as f:
+        with open(self.folder_with_installer+'/ProTech setup_32.exe','wb') as f:
             f.write(response.content)
 
     def run_setup(self):
-        os.system(f'{self.folder_with_installer}/ProTech setup.exe')
+        os.system(f'{self.folder_with_installer}/ProTech setup_32.exe')
 
     def close_curetn(self):
         os._exit(0)
@@ -66,7 +65,7 @@ class Versions:
     def get_local_version(self) -> str:
         """   Get local version of program from version file
         """
-        local_version = 'v0.0.0'
+        local_version = 'v1.0.0'
         return self.version_to_int(local_version)
 
 
