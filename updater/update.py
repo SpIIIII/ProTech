@@ -36,7 +36,7 @@ class Update:
             f.write(response.content)
 
     def run_setup(self):
-        os.system(f'{self.folder_with_installer}/ProTech_setup_32.exe')
+        os.startfile(f'{self.folder_with_installer}/ProTech_setup_32.exe')
 
     def close_curetn(self):
         os._exit(0)
