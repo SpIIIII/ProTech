@@ -11,6 +11,7 @@ import datetime
 import calendar
 from datetime import timedelta
 from updater import update
+from version import version
 
 
 class Main(tk.Frame):
@@ -21,11 +22,11 @@ class Main(tk.Frame):
         self.init_main()
         
 
-        
-        
+    
     def init_main(self):
         self.now1=datetime.datetime.now()
         self.updater = update.Update()
+        self.version = version.Version()
         '''
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
@@ -35,10 +36,13 @@ class Main(tk.Frame):
 
 
 
-        noneedframe1 = tk.Frame(bd = 2)
-        noneedframe1.pack(side=tk.BOTTOM,fill=BOTH, expand=True)
+        bottom_frame = tk.Frame(bd = 2)
+        bottom_frame.pack(side=tk.BOTTOM,fill=BOTH, expand=True)
 
-        label_on_root=tk.Label(noneedframe1, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=SUNKEN,anchor=W)
+        label_for_version = tk.Label(bottom_frame, text = self.version.get_version(),bd=1,relief=SUNKEN,anchor=E)
+        label_for_version.pack(side=tk.BOTTOM,fill =tk.X)
+
+        label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=SUNKEN,anchor=W)
         label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
 
@@ -65,7 +69,7 @@ class Main(tk.Frame):
         '''
         #print (root.winfo_reqwidth())
     #def paint_tree(self):   
-        self.tree=ttk.Treeview(noneedframe1, columns =('ID','description','day','month'),height=15,show='headings')
+        self.tree=ttk.Treeview(bottom_frame, columns =('ID','description','day','month'),height=15,show='headings')
        
         self.tree.column('ID', width=80,anchor=tk.CENTER)
         self.tree.column('description', width=350,anchor=tk.CENTER)
