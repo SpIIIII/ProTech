@@ -25,8 +25,8 @@ class Main(tk.Frame):
     
     def init_main(self):
         self.now1=datetime.datetime.now()
-        self.updater = update.Update()
-        self.version = version.Version()
+        self.version = version.Versions()
+        self.updater = update.Update(self.version)
         '''
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
@@ -39,7 +39,7 @@ class Main(tk.Frame):
         bottom_frame = tk.Frame(bd = 2)
         bottom_frame.pack(side=tk.BOTTOM,fill=BOTH, expand=True)
 
-        label_for_version = tk.Label(bottom_frame, text = self.version.get_version(),bd=1,relief=SUNKEN,anchor=E)
+        label_for_version = tk.Label(bottom_frame, text = self.version.local_version_txt,bd=1,relief=SUNKEN,anchor=E)
         label_for_version.pack(side=tk.BOTTOM,fill =tk.X)
 
         label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=SUNKEN,anchor=W)
@@ -53,9 +53,10 @@ class Main(tk.Frame):
         someButton2.pack(side="left")
         #someButton2.bind('<Button-1>', lambda event2: print(self.db.read_data('п 1.5')))
 
-        someButton3 = ttk.Button(noneedframe,text="Update",command=self.updater.start)
+        someButton3 = ttk.Button(noneedframe,text="Update",command= self.updater.start)
         someButton3.pack(side="left")
         
+
         someButton3 = ttk.Button(noneedframe,text="в Exel",command=self.open_Choice)#,command = self.caclulateExel)
         someButton3.pack(side="right")
         #someButton3.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(self.now1.year,association1[self.combobox1.get()],1),self.now1))
