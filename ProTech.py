@@ -79,7 +79,6 @@ class Main(tk.Frame):
         self.tree.heading('description', text='краткое описание')
         self.tree.heading('day', text='переодичность')
         self.tree.heading('month', text='день')
-        #self.tree.bind("<<TreeviewSelect>>",self.fnStockClick)
         self.tree.bind('<Button-3>',self.select)
         self.tree.pack(side=BOTTOM,fill=BOTH, expand=YES)
         self.view_records()
@@ -117,24 +116,7 @@ class Main(tk.Frame):
         item = self.tree.selection()[0]
         mypinkt=self.tree.item(item,'values')[0]
         self.db.c.execute('''SELECT * FROM weekSchedule WHERE id =? ''',(mypinkt,))
-        for row in self.db.c.fetchall():
-            pass
-            #print(row)
         Change(mypinkt)
-       
-
-    def popup(self, event):
-        #print ("in popUp")
-        item = self.tree.selection()[0]
-        #print('You clicked on', self.tree.item(item,'values')[0])
-        
-
-    def fnStockClick(self,event):
-        item = self.tree.selection()[0]
-        #print(type(self.tree.item(item,'values')))
-        #print('You clicked on', self.tree.item(item,'values'))
-
-    
        
     def view_records(self):
         self.db.c.execute('''SELECT * FROM weekSchedule ''')
@@ -169,10 +151,7 @@ class Main(tk.Frame):
 
     def calculateOneDay1 (self, rowver, date):
         now= date
-        now_day=(now.day)
         now_weekday=(now.weekday())
-        now_month=(now.month)
-        now_year=(now.year)
         now_week=(now.isocalendar()[1])
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
         associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
@@ -257,9 +236,7 @@ class Change(tk.Toplevel):
 
         self.db.c.execute('''SELECT * FROM weekSchedule WHERE id =? ''',(onePunkt,))
         self.myPunkts = self.db.c.fetchall()
-        for row in self.myPunkts:
-            pass
-            #print(row)
+        
         def lurker2(event):
             #print("in psate "+ self.selection_get(selection='CLIPBOARD'))
             self.entry_de2.insert("insert", self.selection_get(selection='CLIPBOARD'))
@@ -564,8 +541,6 @@ class Child(tk.Toplevel):
         button_del.place(x=270,y =377)
         button_del.bind('<Button-1>', lambda event2: self.db.delet_data(self.entry_de1.get()+' '))
 
-        def mytestFunction(self):
-            massagebox.showinfo("","Готово")
 
 
         button_add= ttk.Button(self,text = "add",command=self.main.view_records1)
@@ -601,9 +576,7 @@ class Choice(tk.Toplevel):
         now_day=(now.day)
         now_weekday=(now.weekday())
         now_month=(now.month)
-        now_year=(now.year)
         now_week=(now.isocalendar()[1])
-        rnow_weekday=(real_now.weekday())
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
         associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
@@ -613,19 +586,15 @@ class Choice(tk.Toplevel):
         self.subYearPunkt=[]
         textVar=''
         textYearVar=''
-        #print(range(calendar.mdays[now_month]))
         
         for i in range(calendar.mdays[now_month]):
             now_weekday=(now.weekday())
             now_week=(now.isocalendar()[1])
-            #print(now ,now_week)
             now_day=(now.day)
-            #print(now_week,now_weekday, now_month,row[1],row[2],row[3],row[4],row[5])
             if now_weekday !=6 and now_weekday !=5 :
                 sub_dayly_punkt.append(now_day)
                 self.subYearPunkt.append(now_day)
                 for row in self.db.c.execute("SELECT id, * FROM weekSchedule"):
-                    #print('calculater punkt is '+row[1])
                    
                     if row[3] == ' ежедневно':
                         textVar+='; '+row[1]
@@ -661,10 +630,8 @@ class Choice(tk.Toplevel):
                                                           
             
                     elif str(row[3]) == str(' раз 12 месяцев'):
-                        #print('calculater punkt is '+row[1])
                         if associationforMonth[row[5]]==now_month:
                             if (row[10]+now_week+(4*(13-associationforMonth[row[5]])))%52==0:
-                                #print('in 12 month', associationforMonth[row[5]],now_month)
                                 if association[row[4]]==now_weekday:
                                     textYearVar+=row[1]+'\n'
                 
@@ -681,8 +648,6 @@ class Choice(tk.Toplevel):
             now+=timedelta(1)
 
         self.CreateExel(self.daylypunkt,self.yearPunkt)
-        #print (self.daylypunkt)
-        #print(self.yearPunkt)
 
    
     def CreateExel(self,dayPunkt,yearPunkt):
