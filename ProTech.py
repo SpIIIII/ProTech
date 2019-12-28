@@ -1,4 +1,3 @@
-from tkinter import *
 from tkinter import messagebox
 import textwrap
 import os
@@ -38,9 +37,9 @@ class Main(tk.Frame):
 
 
         bottom_frame = tk.Frame(bd = 2)
-        bottom_frame.pack(side=tk.BOTTOM,fill=BOTH, expand=True)
+        bottom_frame.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=True)
 
-        label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=SUNKEN,anchor=W)
+        label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=tk.SUNKEN,anchor=tk.W)
         label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
 
@@ -80,7 +79,7 @@ class Main(tk.Frame):
         self.tree.heading('day', text='переодичность')
         self.tree.heading('month', text='день')
         self.tree.bind('<Button-3>',self.select)
-        self.tree.pack(side=BOTTOM,fill=BOTH, expand=YES)
+        self.tree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
         self.view_records()
         
         # create a popup menu
@@ -101,8 +100,7 @@ class Main(tk.Frame):
             # mouse pointer over item
             self.tree.selection_set(iid)
             self.aMenu.post(event.x_root, event.y_root)
-            
-            
+
         else:
            pass
 
@@ -243,8 +241,8 @@ class Change(tk.Toplevel):
             
         def lurker(event_obj):
             self.clipboard_clear()
-            self.clipboard_append(self.entry_de2.get('1.0', END))
-            #print("in 2clip "+self.entry_de2.get('1.0', END))
+            self.clipboard_append(self.entry_de2.get('1.0', tk.END))
+            #print("in 2clip "+self.entry_de2.get('1.0', tk.END))
 
 
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
@@ -324,8 +322,8 @@ class Change(tk.Toplevel):
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
         button_cancel.place(x=120,y =300)
 
-        self.entry_de2=tk.Text(self,height=6,width=50,font='Times_New_Roman 10',wrap=WORD)
-        self.entry_de2.grid(row=9,column=2,sticky = W,padx=2,columnspan=5)#place(x=150,y=260)
+        self.entry_de2=tk.Text(self,height=6,width=50,font='Times_New_Roman 10',wrap=tk.WORD)
+        self.entry_de2.grid(row=9,column=2,sticky = tk.W,padx=2,columnspan=5)#place(x=150,y=260)
         self.entry_de2.bind('<Control-c>')
         self.entry_de2.bind('<Control-v>')
         self.entry_de2.bind('<Control-igrave>', lurker2)
@@ -335,7 +333,7 @@ class Change(tk.Toplevel):
 
         button_add= ttk.Button(self,text = "Изменить",command=self.main.view_records1 )
         button_add.place(x=13,y =300)
-        button_add.bind('<Button-1>', lambda event1: self.db.update_data(self.entry_de2.get('1.0', END),
+        button_add.bind('<Button-1>', lambda event1: self.db.update_data(self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),
                                                                         self.comboboxYear.get(),
@@ -414,7 +412,7 @@ class Child(tk.Toplevel):
 
 
     def init_child(self):
-        self.var = IntVar()
+        self.var = tk.IntVar()
         self.title("Добавить пункт")
         self.geometry("432x411+550+250")
         #self.resizable(False,False)
@@ -425,75 +423,75 @@ class Child(tk.Toplevel):
         style.configure("Red.TEntry", foreground="gray")
         style = ttk.Style()
         style.configure("Black.TEntry", foreground="black")
-        self.weekday=StringVar()
-        self.whatday=StringVar()
-        self.whatnumber=StringVar()
+        self.weekday=tk.StringVar()
+        self.whatday=tk.StringVar()
+        self.whatnumber=tk.StringVar()
 
         label_desctiption=tk.Label(self, text="Номер пункта")
-        label_desctiption.grid(row=1,column=1,sticky = W,  pady=3)#place(x=20,y=20)
+        label_desctiption.grid(row=1,column=1,sticky = tk.W,  pady=3)#place(x=20,y=20)
         label_desctiption=tk.Label(self, text="Переодичность")
-        label_desctiption.grid(row=2,column=1,sticky = W,  pady=3)#place(x=20,y=50)
+        label_desctiption.grid(row=2,column=1,sticky = tk.W,  pady=3)#place(x=20,y=50)
         label_desctiption=tk.Label(self, text="День выполнения")
-        label_desctiption.grid(row=3,column=1,sticky = W, pady=3)#place(x=20,y=80)
+        label_desctiption.grid(row=3,column=1,sticky = tk.W, pady=3)#place(x=20,y=80)
         label_year_date=tk.Label(self, text="Месяц")
-        label_year_date.grid(row=4,column=1,sticky = W,  pady=3)#place(x=20,y=110)
+        label_year_date.grid(row=4,column=1,sticky = tk.W,  pady=3)#place(x=20,y=110)
         label_desctiption=tk.Label(self, text="Инструкция")
-        label_desctiption.grid(row=5,column=1,sticky = W,  pady=3)#place(x=20,y=140)
+        label_desctiption.grid(row=5,column=1,sticky = tk.W,  pady=3)#place(x=20,y=140)
         label_desctiption=tk.Label(self, text="Приказ")
-        label_desctiption.grid(row=6,column=1,sticky = W,  pady=3)#place(x=20,y=170)
+        label_desctiption.grid(row=6,column=1,sticky = tk.W,  pady=3)#place(x=20,y=170)
         label_desctiption=tk.Label(self, text="Исполнитель")
-        label_desctiption.grid(row=7,column=1,sticky = W,  pady=3)#place(x=20,y=200)
+        label_desctiption.grid(row=7,column=1,sticky = tk.W,  pady=3)#place(x=20,y=200)
         label_desctiption=tk.Label(self, text="Оборудование")
-        label_desctiption.grid(row=8,column=1,sticky = W,  pady=3)#place(x=20,y=230)
+        label_desctiption.grid(row=8,column=1,sticky = tk.W,  pady=3)#place(x=20,y=230)
         label_desctiption=tk.Label(self, text="Описание")
-        label_desctiption.grid(row=9,column=1,sticky = W,  pady=3)#place(x=20,y=260)
+        label_desctiption.grid(row=9,column=1,sticky = tk.W,  pady=3)#place(x=20,y=260)
 
         self.entry_de1=ttk.Entry(self,textvariable =self.whatnumber)
         self.entry_de1.insert(0,'п 1.5  ')
         self.entry_de1.bind('<FocusIn>', self.on_entry_click)
         self.entry_de1.bind('<FocusOut>', self.on_focusout)
         self.entry_de1.configure(style="Red.TEntry")
-        self.entry_de1.grid(row=1,column=2,sticky = W,padx=2)#place(x=150,y=20)
+        self.entry_de1.grid(row=1,column=2,sticky = tk.W,padx=2)#place(x=150,y=20)
 
         self.combobox1=ttk.Combobox(self,values=[u' ежедневно',u' раз в неделю',u' раз в 2 недели',u' раз в 4 недели'],textvariable=self.weekday)
         self.combobox1.current(0)
-        self.combobox1.grid(row=2,column=2,sticky = W,padx=2)#place(x=150,y=50)
+        self.combobox1.grid(row=2,column=2,sticky = tk.W,padx=2)#place(x=150,y=50)
 
         self.combobox2=ttk.Combobox(self,values=[u' пн.',u' вт.',u' ср.',u' чт.',u' пт.'],textvariable =self.whatday)
         self.combobox2.current(0)
-        self.combobox2.grid(row=3,column=2,sticky = W,padx=2)#place(x=150,y=80)
+        self.combobox2.grid(row=3,column=2,sticky = tk.W,padx=2)#place(x=150,y=80)
 
         self.comboboxYear=ttk.Combobox(self,values=[u' Январь',u' Февраль',u' Март',u' Апрель',u' Май',u' Июнь',u' Июль',u' Август', u' Сентябрь',u' Октябрь',u' Ноябрь',u' Декабрь'])
         self.comboboxYear.current(0)
-        self.comboboxYear.grid(row=4,column=2,sticky = W,padx=2)#place(x=150,y=110)
+        self.comboboxYear.grid(row=4,column=2,sticky = tk.W,padx=2)#place(x=150,y=110)
 
         self.entryInst=ttk.Entry(self)#textvariable =self.whatnumber)
         self.entryInst.insert(0,'ЦШ 0065  ')
         self.entryInst.bind('<FocusIn>', self.on_entry_click1)
         self.entryInst.bind('<FocusOut>', self.on_focusout1)
         self.entryInst.configure(style="Red.TEntry")
-        self.entryInst.grid(row=5,column=2,sticky = W,padx=2)#place(x=150,y=140)
+        self.entryInst.grid(row=5,column=2,sticky = tk.W,padx=2)#place(x=150,y=140)
 
         self.entryComand=ttk.Entry(self)#textvariable =self.whatnumber)
         self.entryComand.insert(0,'(приказ 043-Ц/од)  ')
         self.entryComand.bind('<FocusIn>', self.on_entry_click2)
         self.entryComand.bind('<FocusOut>', self.on_focusout2)
         self.entryComand.configure(style="Red.TEntry")
-        self.entryComand.grid(row=6,column=2,sticky = W,padx=2)#place(x=150,y=170)
+        self.entryComand.grid(row=6,column=2,sticky = tk.W,padx=2)#place(x=150,y=170)
 
         self.entryMaker=ttk.Entry(self)#textvariable =self.whatnumber)
         self.entryMaker.insert(0,'ШН  ')
         self.entryMaker.bind('<FocusIn>', self.on_entry_click3)
         self.entryMaker.bind('<FocusOut>', self.on_focusout3)
         self.entryMaker.configure(style="Red.TEntry")
-        self.entryMaker.grid(row=7,column=2,sticky = W,padx=2)#place(x=150,y=200)
+        self.entryMaker.grid(row=7,column=2,sticky = tk.W,padx=2)#place(x=150,y=200)
 
         self.entryOborud=ttk.Entry(self)#textvariable =self.whatnumber)
         self.entryOborud.insert(0,'Go Global АРМ NE – UniGate  ')
         self.entryOborud.bind('<FocusIn>', self.on_entry_click4)
         self.entryOborud.bind('<FocusOut>', self.on_focusout4)
         self.entryOborud.configure(style="Red.TEntry")
-        self.entryOborud.grid(row=8,column=2,sticky = W,padx=2)#place(x=150,y=230)
+        self.entryOborud.grid(row=8,column=2,sticky = tk.W,padx=2)#place(x=150,y=230)
 
 
         def lurker2(event):
@@ -502,35 +500,35 @@ class Child(tk.Toplevel):
             
         def lurker(event_obj):
             self.clipboard_clear()
-            self.clipboard_append(self.entry_de2.get('1.0', END))
-            #print("in 2clip "+self.entry_de2.get('1.0', END))
+            self.clipboard_append(self.entry_de2.get('1.0', tk.END))
+            #print("in 2clip "+self.entry_de2.get('1.0', tk.END))
 
 
         
-        self.entry_de2=tk.Text(self,height=5,width=35,font='Times_New_Roman 10',wrap=WORD)
-        self.entry_de2.grid(row=9,column=2,sticky = W,padx=2,columnspan=5)#place(x=150,y=260)
+        self.entry_de2=tk.Text(self,height=5,width=35,font='Times_New_Roman 10',wrap=tk.WORD)
+        self.entry_de2.grid(row=9,column=2,sticky = tk.W,padx=2,columnspan=5)#place(x=150,y=260)
         self.entry_de2.bind('<Control-c>')
         self.entry_de2.bind('<Control-v>')
         self.entry_de2.bind('<Control-igrave>', lurker2)
         self.entry_de2.bind('<Control-ntilde>', lurker)
         
 
-        self.comboboxYear.config(state=DISABLED)
+        self.comboboxYear.config(state=tk.DISABLED)
         
         def activateCheck():
             if self.var.get() == 1:          #whenever checked
-                self.comboboxYear.config(state=NORMAL)
+                self.comboboxYear.config(state=tk.NORMAL)
                 self.combobox1.config(values=[u' раз в 3 месяца',u' раз в 6 месяцев',u' раз 12 месяцев'])
                 self.combobox1.current(0)
 
                 
                
             elif self.var.get() == 0:        #whenever unchecked
-                self.comboboxYear.config(state=DISABLED)
+                self.comboboxYear.config(state=tk.DISABLED)
                 self.combobox1.config(values=[u' ежедневно',u' раз в неделю',u' раз в 2 недели',u' раз в 4 недели'])
                 self.combobox1.current(0)
         
-        self.c = Checkbutton(self, text="годовой", variable=self.var,command=activateCheck)
+        self.c = tk.Checkbutton(self, text="годовой", variable=self.var,command=activateCheck)
         self.c.grid(row=1,column=3)#place(x=277,y =20)
 
         
@@ -546,7 +544,7 @@ class Child(tk.Toplevel):
         button_add= ttk.Button(self,text = "add",command=self.main.view_records1)
         button_add.place(x=13,y =377)
         button_add.bind('<Button-1>', lambda event1: self.db.insert_data(self.entry_de1.get()+' ',
-                                                                        self.entry_de2.get('1.0', END),
+                                                                        self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),
                                                                         self.comboboxYear.get(),
@@ -689,7 +687,7 @@ class Choice(tk.Toplevel):
             #print(i)
             # Заполняем ячейку (Строка, Колонка, Текст, Шрифт)
             sheet.write(self.x+13,1,str(dayPunkt[self.x-1][0]),font3)
-            sheet.write(self.x+13,12,'%s'%self.entry_do.get('1.0', END),font3)
+            sheet.write(self.x+13,12,'%s'%self.entry_do.get('1.0', tk.END),font3)
             self.x+=1
         self.x=1
         
@@ -1060,12 +1058,12 @@ class Choice(tk.Toplevel):
             self.entry_set.configure(style="Black.TEntry")#entry.config(fg = 'black')
     def on_entry_click2(self,event):
         #print(self.text2)
-        if self.entry_do.get('1.0', END) ==self.text1:
-            self.text1=self.entry_do.get('1.0', END) 
+        if self.entry_do.get('1.0', tk.END) ==self.text1:
+            self.text1=self.entry_do.get('1.0', tk.END) 
             #print('yes i work')
-            self.entry_do.delete('1.0', END) # delete all the text in the entry
-            self.entry_do.insert(INSERT, self.text2) #Insert blank for user input
-            self.text2=self.entry_do.get('1.0', END)
+            self.entry_do.delete('1.0', tk.END) # delete all the text in the entry
+            self.entry_do.insert(tk.INSERT, self.text2) #Insert blank for user input
+            self.text2=self.entry_do.get('1.0', tk.END)
             self.entry_do.config(fg = 'black')#entry.config(fg = 'black')
             
 
@@ -1079,10 +1077,10 @@ class Choice(tk.Toplevel):
             self.entry_set.configure(style="Red.TEntry")
     def on_focusout2(self,event):
         #print(self.text2)
-        if self.entry_do.get('1.0', END) == self.text2:
-            self.text2=self.entry_do.get('1.0', END)
+        if self.entry_do.get('1.0', tk.END) == self.text2:
+            self.text2=self.entry_do.get('1.0', tk.END)
             #print('yes i work to')
-            self.entry_do.insert(INSERT, self.text1)
+            self.entry_do.insert(tk.INSERT, self.text1)
             self.entry_do.config(fg = 'gray')
 
 
@@ -1103,9 +1101,9 @@ class Choice(tk.Toplevel):
         style = ttk.Style()
         style.configure("Black.TEntry", foreground="black")
 
-        self.textForUtv=StringVar()
-        self.textForSet=StringVar()
-        self.textForDo=StringVar()
+        self.textForUtv= tk.StringVar()
+        self.textForSet= tk.StringVar()
+        self.textForDo= tk.StringVar()
 
         self.now1=datetime.datetime.now()
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
@@ -1148,10 +1146,10 @@ class Choice(tk.Toplevel):
         self.entry_set.configure(style="Red.TEntry")
         self.entry_set.place(x=100,y=50)
 
-        self.entry_do=tk.Text(self,height=3,width=35,font='Times_New_Roman 10',wrap=WORD)
+        self.entry_do=tk.Text(self,height=3,width=35,font='Times_New_Roman 10',wrap=tk.WORD)
         
         self.entry_do.place(x=100,y=80)
-        #self.text1=self.entry_do.get('1.0', END)
+        #self.text1=self.entry_do.get('1.0', tk.END)
 
         self.grab_set()
         self.focus_set()
@@ -1184,10 +1182,10 @@ class ShowOneDay(tk.Toplevel):
         self.sctribeTree.column('description',width=340,anchor=tk.N)
         self.sctribeTree.heading('id',text='пункт')
         self.sctribeTree.heading('description',text='описание')
-        self.sctribeTree.pack(side=BOTTOM,fill=BOTH, expand=YES)
+        self.sctribeTree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
 
         self.scrollbar = ttk.Scrollbar(self,orient='vertical',command=self.sctribeTree.yview)
-        self.scrollbar.pack( side = RIGHT, fill = Y )
+        self.scrollbar.pack( side = tk.RIGHT, fill = tk.Y )
          
         
         self.sctribeTree.configure(yscrollcommand=self.scrollbar.set)
