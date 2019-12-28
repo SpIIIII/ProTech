@@ -12,6 +12,7 @@ import calendar
 from datetime import timedelta
 from updater import update
 from version import version
+import platform
 
 
 class Main(tk.Frame):
@@ -1019,10 +1020,10 @@ class Choice(tk.Toplevel):
 
     def calculateOneDay (self, rowver, date):
         now= date
-        now_day=(now.day)
+        
         now_weekday=(now.weekday())
-        now_month=(now.month)
-        now_year=(now.year)
+        
+        
         now_week=(now.isocalendar()[1])
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
         associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
@@ -1127,7 +1128,10 @@ class Choice(tk.Toplevel):
         self.minsize(500,220)
         self.text1=''
         self.text2=''
-        self.desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+        if IS_WINDOWS:
+            self.desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+        else:
+            self.desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
 
         style = ttk.Style()
         style.configure("Red.TEntry", foreground="gray")
@@ -1227,8 +1231,6 @@ class ShowOneDay(tk.Toplevel):
         print(self.main.todayPunkt())
         for x in self.main.todayPunkt():
             item = self.sctribeTree.insert("", "end", values=(x, '\n'.join(textwrap.wrap(str(db.read_data(str(x)))[3:-6], 45))))
-            
-
             i+=1
         
         self.grab_set()
@@ -1275,9 +1277,9 @@ class DB:
 
 
 if __name__ ==  "__main__":
+    IS_WINDOWS = True if platform.system() == 'Windows' else False
     root=tk.Tk()
     db=DB()
-
     app = Main (root)
     app.pack()
     root.title("Техпроцесс")
