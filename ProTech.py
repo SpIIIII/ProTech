@@ -39,9 +39,6 @@ class Main(tk.Frame):
         bottom_frame = tk.Frame(bd = 2)
         bottom_frame.pack(side=tk.BOTTOM,fill=BOTH, expand=True)
 
-        label_for_version = tk.Label(bottom_frame, text = self.version.local_version_txt,bd=1,relief=SUNKEN,anchor=E)
-        label_for_version.pack(side=tk.BOTTOM,fill =tk.X)
-
         label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=SUNKEN,anchor=W)
         label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
