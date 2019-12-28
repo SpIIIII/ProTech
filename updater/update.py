@@ -22,14 +22,13 @@ class Update:
 
 
     def start(self):
-        print(f'{self.versions.local_version_txt}, {self.versions.remote_version_txt}')
         if self.versions.local_version < self.versions.remote_version:
             if self.confirm_update():
                 self.download()
                 self.run_setup()
                 self.close_curetn()
         else:
-            tk.messagebox.showinfo('Up to date',f'Текущая версия самая атуальная ({self.versions.local_version_txt})\n')
+            tk.messagebox.showinfo('Up to date',f'Текущая версия ({self.versions.local_version_txt}) обновлена')
 
     def confirm_update(self):
             MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.versions.local_version_txt} версия для обновления - {self.versions.remote_version}.\n\
