@@ -5,7 +5,7 @@ class Versions:
         self.ulr_of_version = "http://68.183.208.74"
         self.remote_version_txt = self.get_remote_version_txt()
         self.remote_version = self.version_to_int(self.remote_version_txt)
-        with open('version/version', 'r') as f:
+        with open('.version', 'r') as f:
             self.local_version_txt = f.read()
         self.local_version = self.version_to_int(self.local_version_txt)
         
