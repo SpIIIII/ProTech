@@ -24,49 +24,43 @@ class Main(tk.Frame):
 
     
     def init_main(self):
-        self.now1=datetime.datetime.now()
+
+        self.now1 = datetime.datetime.now()
         self.version = version.Versions()
         self.updater = update.Update(self.version)
         '''
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
-        '''        
-        noneedframe = tk.Frame(bg = "lightgray",bd = 2)
-        noneedframe.pack(side=tk.TOP,fill =tk.X)
-
-
+        '''  
+        # Draw Frames      
+        main_frame = tk.Frame(bg = "lightgray",bd = 2)
+        main_frame.pack(side=tk.TOP,fill =tk.X)
 
         bottom_frame = tk.Frame(bd = 2)
         bottom_frame.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=True)
 
+        # Draw MenuBar
+        menubar = tk.Menu()
+        filemenu = tk.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Добавить пункт", command=self.open_dialog)
+        filemenu.add_command(label="Обновить список", command=self.view_records1)
+        filemenu.add_command(label="в Exel", command=self.open_Choice)
+        filemenu.add_separator()
+        filemenu.add_command(label="Выход", command=root.quit)
+
+        programmenu = tk.Menu(menubar, tearoff=0)
+        programmenu.add_command(label='Обновить программу', command=self.updater.start)
+        
+        menubar.add_cascade(label="Файл", menu=filemenu)
+        menubar.add_cascade(label="Программа", menu=programmenu)
+        root.config(menu=menubar)
+
+        # Draw Labels
         label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=tk.SUNKEN,anchor=tk.W)
         label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
-
-        someButton1 = ttk.Button(noneedframe,text="Добавить",command=self.open_dialog)
-        someButton1.pack(side="left")
-       
-        someButton2 = ttk.Button(noneedframe,text="Обновить",command=self.view_records1)
-        someButton2.pack(side="left")
-        #someButton2.bind('<Button-1>', lambda event2: print(self.db.read_data('п 1.5')))
-
-        someButton3 = ttk.Button(noneedframe,text="Update",command= self.updater.start)
-        someButton3.pack(side="left")
         
-
-        someButton3 = ttk.Button(noneedframe,text="в Exel",command=self.open_Choice)#,command = self.caclulateExel)
-        someButton3.pack(side="right")
-        #someButton3.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(self.now1.year,association1[self.combobox1.get()],1),self.now1))
-
-        
-        '''
-        self.combobox1=ttk.Combobox(noneedframe,values=[u' Январь',u' Февраль',u' Март',u' Апрель',u' Май',u' Июнь',u' Июль',u' Август',
-                                                        u' Сентябрь',u' Октябрь',u' Ноябрь',u' Декабрь'])
-        self.combobox1.current(self.now1.month-1)
-        self.combobox1.pack(side="right")
-        '''
-        #print (root.winfo_reqwidth())
-    #def paint_tree(self):   
+        # Draw TreeView      
         self.tree=ttk.Treeview(bottom_frame, columns =('ID','description','day','month'),height=15,show='headings')
        
         self.tree.column('ID', width=80,anchor=tk.CENTER)
@@ -82,7 +76,7 @@ class Main(tk.Frame):
         self.tree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
         self.view_records()
         
-        # create a popup menu
+        # Create a popup menu
         self.aMenu = tk.Menu(self, tearoff=0)
         self.aMenu.add_command(label='Изменить', command=self.hello)
         self.aMenu.add_separator()
@@ -91,6 +85,7 @@ class Main(tk.Frame):
 
         self.tree_item = ''
 
+    
     def select(self, event):
         """action in event of button 3 on tree view"""
         # select row under mouse
