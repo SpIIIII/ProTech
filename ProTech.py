@@ -1,17 +1,19 @@
-from tkinter import messagebox
-import textwrap
-import os
 import tkinter as tk
-from tkinter import ttk
+import platform
+import textwrap
+import datetime
+import calendar
 import sqlite3
 import xlwt
-import datetime
-#from calendar import monthrange
-import calendar
-from datetime import timedelta
+import os
+from punkts import Punkts
+from tkinter import ttk
 from updater import update
 from version import version
-import platform
+from datetime import timedelta
+from tkinter import messagebox
+
+
 
 
 class Main(tk.Frame):
@@ -32,19 +34,17 @@ class Main(tk.Frame):
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
         '''  
-        # Draw Frames      
-        main_frame = tk.Frame(bg = "lightgray",bd = 2)
-        main_frame.pack(side=tk.TOP,fill =tk.X)
-
-        bottom_frame = tk.Frame(bd = 2)
-        bottom_frame.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=True)
+        # Draw Frames    
+        main_frame = tk.Frame(bd = 2)
+        main_frame.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=True)
 
         # Draw MenuBar
         menubar = tk.Menu()
         filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Добавить пункт", command=self.open_dialog)
+        filemenu.add_command(label="Добавить пункт", command=self.add_new_punkt)
         filemenu.add_command(label="Обновить список", command=self.view_records1)
-        filemenu.add_command(label="в Exel", command=self.open_Choice)
+        filemenu.add_command(label="в Exel", command=self.open_To_Exel)
+        filemenu.add_command(label="test", command=self.db.db_to_class)
         filemenu.add_separator()
         filemenu.add_command(label="Выход", command=root.quit)
 
@@ -56,12 +56,12 @@ class Main(tk.Frame):
         root.config(menu=menubar)
 
         # Draw Labels
-        label_on_root=tk.Label(bottom_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=tk.SUNKEN,anchor=tk.W)
+        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=tk.SUNKEN,anchor=tk.W)
         label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
         
         # Draw TreeView      
-        self.tree=ttk.Treeview(bottom_frame, columns =('ID','description','day','month'),height=15,show='headings')
+        self.tree=ttk.Treeview(main_frame, columns =('ID','description','day','month'),height=15,show='headings')
        
         self.tree.column('ID', width=80,anchor=tk.CENTER)
         self.tree.column('description', width=350,anchor=tk.CENTER)
@@ -81,11 +81,9 @@ class Main(tk.Frame):
         self.aMenu.add_command(label='Изменить', command=self.hello)
         self.aMenu.add_separator()
         self.aMenu.add_command(label='Удалить', command=self.delete)
-        
 
         self.tree_item = ''
 
-    
     def select(self, event):
         """action in event of button 3 on tree view"""
         # select row under mouse
@@ -107,9 +105,9 @@ class Main(tk.Frame):
 
     def hello(self):
         item = self.tree.selection()[0]
-        mypinkt=self.tree.item(item,'values')[0]
-        self.db.c.execute('''SELECT * FROM weekSchedule WHERE id =? ''',(mypinkt,))
-        Change(mypinkt)
+        mypunkt=self.tree.item(item,'values')[0]
+        self.db.c.execute('''SELECT * FROM weekSchedule WHERE id =? ''',(mypunkt,))
+        Change(mypunkt)
        
     def view_records(self):
         self.db.c.execute('''SELECT * FROM weekSchedule ''')
@@ -126,90 +124,20 @@ class Main(tk.Frame):
         for row in self.db.c.fetchall():
             #print(row)
             self.tree.insert('', 'end', values=row)
-    
-    def refreshTree(self):
-        #print('in refreshTree')
-        self.tree.delete('номер')
 
     def todayPunkt(self):
         self.todayToDo=[]
         for row in self.db.c.execute("SELECT id, * FROM weekSchedule"):
-            #print('in ToDo',self.calculateOneDay1(row,self.now1))
-            if self.calculateOneDay1(row,self.now1):
+            if calculateOneDay(row,self.now1):
                 self.todayToDo.append(row[1])
-                #self.todayToDo.append(' ')
         
         return self.todayToDo
 
+    def add_new_punkt(self):
+        New_Punkt()
 
-    def calculateOneDay1 (self, rowver, date):
-        now= date
-        now_weekday=(now.weekday())
-        now_week=(now.isocalendar()[1])
-        association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
-        associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
-                                                        ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
-        
-        if now_weekday !=6 and now_weekday !=5 :
-            #print('in one day',now_week,rowver[3])
-            if rowver[3] == ' ежедневно':
-                return(True)
-                
-                        
-
-            elif str(rowver[3]) == str(' раз в неделю'):
-                #print(date,'in one day',rowver[4],now_weekday)
-                if association[rowver[4]]==now_weekday:
-                    #print('i work')
-                    return(True)
-                   
-                            
-
-            elif str(rowver[3]) == str(' раз в 2 недели'):
-                if rowver[10]+now_week%2==0:
-                    if association[rowver[4]]==now_weekday:
-                        return(True)
-                       
-                                
-                                
-            elif str(rowver[3]) == str(' раз в 4 недели'):
-                if rowver[10]+now_week%4==0:
-                    if association[rowver[4]]==now_weekday:
-                        return(True)
-
-
-
-            elif str(rowver[3]) == str(' раз в 3 месяца'):
-                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%13==0:
-                    if association[rowver[4]]==now_weekday:
-                        #print('in 6 month', associationforMonth[rowver[5]],now_month)
-                        return(True)
-                       
-                                
-            
-            elif str(rowver[3]) == str(' раз в 6 месяцев'):
-                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%26==0:
-                    if association[rowver[4]]==now_weekday:
-                        #print('in 6 month', associationforMonth[rowver[5]],now_month)
-                        return(True)
-                    
-                                                          
-            
-            elif str(rowver[3]) == str(' раз 12 месяцев'):
-                 if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%52==0:
-                     if (47+now_week+associationforMonth[rowver[5]]+rowver[10])%52==0:
-                        #print('in 12 month', associationforMonth[rowver[5]],now_month)
-                        if association[rowver[4]]==now_weekday:
-                            return(True)
-                           
-        return(False)
-
-
-    def open_dialog(self):
-        Child()
-
-    def open_Choice(self):
-        Choice()
+    def open_To_Exel(self):
+        To_Exel()
 
     def open_Show(self):
         ShowOneDay()
@@ -342,7 +270,7 @@ class Change(tk.Toplevel):
                                                                         )
 
 
-class Child(tk.Toplevel):
+class New_Punkt(tk.Toplevel):
     def __init__ (self):
         super().__init__ (root)
         self.db=db
@@ -558,7 +486,7 @@ class Child(tk.Toplevel):
         self.focus_set()
                 
         
-class Choice(tk.Toplevel):
+class To_Exel(tk.Toplevel):
     def __init__ (self):
         super().__init__ (root)
         self.db=db
@@ -591,43 +519,36 @@ class Choice(tk.Toplevel):
                    
                     if row[3] == ' ежедневно':
                         textVar+='; '+row[1]
-                        
 
                     elif str(row[3]) == str(' раз в неделю'):
                         if association[row[4]]==now_weekday:
                             textVar+='; '+row[1]
-                            
 
                     elif str(row[3]) == str(' раз в 2 недели'):
                         if (now_week+row[10])%2==0:
                             if association[row[4]]==now_weekday:
                                 textVar+='; '+row[1]
                                 
-                                
                     elif str(row[3]) == str(' раз в 4 недели'):
                         if (now_week+row[10])%4==0:
                             if association[row[4]]==now_weekday:
                                 textVar+='; '+row[1]
-                                
 
                     elif str(row[3]) == str(' раз в 3 месяца'):
                          if (row[10]+now_week+(4*(13-associationforMonth[row[5]])))%13==0:
                             if association[row[4]]==now_weekday:
                                 textYearVar+=row[1]+'\n'
-
             
                     elif str(row[3]) == str(' раз в 6 месяцев'):
                         if (row[10]+now_week+(4*(13-associationforMonth[row[5]])))%26==0:
                             if association[row[4]]==now_weekday:
                                 textYearVar+=row[1]+'\n'
-                                                          
             
                     elif str(row[3]) == str(' раз 12 месяцев'):
                         if associationforMonth[row[5]]==now_month:
                             if (row[10]+now_week+(4*(13-associationforMonth[row[5]])))%52==0:
                                 if association[row[4]]==now_weekday:
                                     textYearVar+=row[1]+'\n'
-                
                                 
                 sub_dayly_punkt.append(textVar)
                 self.daylypunkt.append(sub_dayly_punkt)
@@ -647,20 +568,20 @@ class Choice(tk.Toplevel):
         self.x=1
         self.y=1
         self.z=0
+
         # Создаем книку
         book = xlwt.Workbook('utf8')
         
-        
         # Создаем шрифт
         font1 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold on,\
-    italic off; align: wrap off, vert top, horiz left;')
+            italic off; align: wrap off, vert top, horiz left;')
         font2 = xlwt.easyxf('font: height 280,name Times_New_Roman,colour_index black, bold on,\
-    italic off; align: vertical center, horizontal center, wrap off;')
+            italic off; align: vertical center, horizontal center, wrap off;')
         font2_1 = xlwt.easyxf('font: height 280,name Times_New_Roman,colour_index black, bold on,\
-    italic off; align: vertical center, horizontal left, wrap off;')
+            italic off; align: vertical center, horizontal left, wrap off;')
         font3 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold off,\
-    italic off; align: vertical top, horizontal center, wrap on;\
-    borders: left thin, right thin, top thin, bottom thin;')
+            italic off; align: vertical top, horizontal center, wrap on;\
+            borders: left thin, right thin, top thin, bottom thin;')
    
         # Добавляем лист
         sheet = book.add_sheet('sheetname',cell_overwrite_ok=True)
@@ -918,7 +839,6 @@ class Choice(tk.Toplevel):
         for row in self.db.c.execute("SELECT id, * FROM weekSchedule"):
             if row[3]!=' раз 12 месяцев' and row[3]!=' раз в 6 месяцев':
                 sheet.write_merge(z+13, z+15, x+7,x+7,'',font3)
-                #print('in calc 4   x=',x,row[x])
                 z+=3
 
         x=1
@@ -926,7 +846,6 @@ class Choice(tk.Toplevel):
         for row in self.db.c.execute("SELECT id, * FROM weekSchedule"):
             if row[3]!=' раз 12 месяцев' and row[3]!=' раз в 6 месяцев':
                 sheet.write_merge(z+13, z+15, x+8,x+8,'',font3)
-                #print('in calc 4   x=',x,row[x])
                 z+=3
 
        
@@ -939,15 +858,12 @@ class Choice(tk.Toplevel):
                 e=0
                 w=0
                 for self.p in range(3):
-                    #print(self.p)
                     for y in range (14):
                         sheet.write(z+13+self.p,10+y,'',font3)
                     while (10+w+self.startday) <= 23 and e in range(calendar.mdays[forNow.month]):
                         e+=1
                         forNowCor=datetime.datetime(forNow.year,forNow.month,e)
-                        #print('in while',forNowCor,e,self.calculateOneDay(row,forNowCor))
-                        #print(row[3])
-                        if(self.calculateOneDay(row,forNowCor)):
+                        if(calculateOneDay(row,forNowCor)):
                             sheet.write(z+13+self.p,10+self.startday+w,'*',font3)
                         else:
                             sheet.write(z+13+self.p,10+self.startday+w,' ',font3)
@@ -963,82 +879,14 @@ class Choice(tk.Toplevel):
                 z+=3
 
         sheet.write_merge(z+15, z+15, 1,5,'Составил: _____________ %s'%self.entry_set.get(),font2)
-        # print (self.calculateOneDay(self.db.c.execute("SELECT id, * FROM weekSchedule"),forNow))
         
         sheet.portrait = False
         sheet.set_print_scaling(100)
-        #print(self.desktop+'/Четырёхнедельный %s %i.xls'%(self.combobox1.get(),self.now1.year))
         book.save(self.desktop+'/Четырёхнедельный %s %i.xls'%(self.combobox1.get(),self.now1.year) ) 
 
     
     def WhatDistant(self,targetText):
-        #print(targetText,len(targetText),len(targetText)//20)
         return (len(targetText)//20+1)*300
- 
-
-    def calculateOneDay (self, rowver, date):
-        now= date
-        
-        now_weekday=(now.weekday())
-        
-        
-        now_week=(now.isocalendar()[1])
-        association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
-        associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
-                                                        ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
-        #print('in one day',rowver[3])
-        if now_weekday !=6 and now_weekday !=5 :
-            if rowver[3] == ' ежедневно':
-                return(True)
-                
-                        
-
-            elif str(rowver[3]) == str(' раз в неделю'):
-                #print(date,'in one day',rowver[4],now_weekday)
-                if association[rowver[4]]==now_weekday:
-                    #print('i work')
-                    return(True)
-                   
-                            
-
-            elif str(rowver[3]) == str(' раз в 2 недели'):
-                if (now_week+rowver[10])%2==0:
-                    if association[rowver[4]]==now_weekday:
-                        return(True)
-                       
-                                
-                                
-            elif str(rowver[3]) == str(' раз в 4 недели'):
-                if (now_week+rowver[10])%4==0:
-                    if association[rowver[4]]==now_weekday:
-                        return(True)
-                       
-                             
-
-            elif str(rowver[3]) == str(' раз в 3 месяца'):
-                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%13==0:
-                    if association[rowver[4]]==now_weekday:
-                        #print('in 6 month', associationforMonth[rowver[5]],now_month)
-                        return(True)
-
-            
-            elif str(rowver[3]) == str(' раз в 6 месяцев'):
-                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%26==0:
-                    if association[rowver[4]]==now_weekday:
-                        #print('in 6 month', associationforMonth[rowver[5]],now_month)
-                        return(True)
-                    
-                                                          
-            
-            elif str(rowver[3]) == str(' раз 12 месяцев'):
-                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%52==0:
-                     if (47+now_week+associationforMonth[rowver[5]]+rowver[10])%52==0:
-                        #print('in 12 month', associationforMonth[rowver[5]],now_month)
-                        if association[rowver[4]]==now_weekday:
-                            return(True)
-                           
-        return(False)
-
 
     def on_entry_click(self,event):
         """function that gets called whenever entry is clicked"""
@@ -1209,8 +1057,6 @@ class DB:
 
                
     def insert_data(self, num, description, whenW, whenD,yearM,inst,coma,make,equip,number):
-        
-        #print (num, description, whenW, whenD,yearM)
         self.c.execute('''INSERT INTO weekSchedule (id, description, whatweek, whatday, yearMonth, instruction, comand, Maker, equipment, shiftweek) 
                           VALUES (?,?,?,?,?,?,?,?,?,?)''',(num, description, whenW, whenD,yearM,inst,coma,make,equip,number))
         self.conn.commit()
@@ -1225,13 +1071,63 @@ class DB:
         
     def read_data(self,num):
         self.c.execute('''SELECT description FROM weekSchedule WHERE id =?''',(num,))
-        #print('in read',self.c.fetchall())
         return self.c.fetchall()
+
+    def db_to_class(self):
+        punkts = Punkts.Punkts()
+        for punkt in self.c.execute("SELECT id, * FROM weekSchedule"):
+            punkts.add_punkt(punkt)
+        return punkts
+    
        
     def __del__(self):     
         self.conn.close()
 
    
+
+def calculateOneDay (rowver, date):
+        now = date        
+        now_weekday=(now.weekday())       
+        
+        now_week=(now.isocalendar()[1])
+        association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
+        associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
+                                                        ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
+        if now_weekday !=6 and now_weekday !=5 :
+            if rowver[3] == ' ежедневно':
+                return(True)
+
+            elif str(rowver[3]) == str(' раз в неделю'):
+                if association[rowver[4]]==now_weekday:
+                    return(True)
+
+            elif str(rowver[3]) == str(' раз в 2 недели'):
+                if (now_week+rowver[10])%2==0:
+                    if association[rowver[4]]==now_weekday:
+                        return(True)
+                                
+            elif str(rowver[3]) == str(' раз в 4 недели'):
+                if (now_week+rowver[10])%4==0:
+                    if association[rowver[4]]==now_weekday:
+                        return(True)
+
+            elif str(rowver[3]) == str(' раз в 3 месяца'):
+                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%13==0:
+                    if association[rowver[4]]==now_weekday:
+                        return(True)
+            
+            elif str(rowver[3]) == str(' раз в 6 месяцев'):
+                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%26==0:
+                    if association[rowver[4]]==now_weekday:
+                        return(True)                  
+            
+            elif str(rowver[3]) == str(' раз 12 месяцев'):
+                if (rowver[10]+now_week+(4*(13-associationforMonth[rowver[5]])))%52==0:
+                     if (47+now_week+associationforMonth[rowver[5]]+rowver[10])%52==0:
+                        if association[rowver[4]]==now_weekday:
+                            return(True)
+                           
+        return(False)
 
 
 if __name__ ==  "__main__":
