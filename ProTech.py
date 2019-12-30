@@ -6,8 +6,10 @@ import calendar
 import sqlite3
 import xlwt
 import os
-from punkts import Punkts
+
 from tkinter import ttk
+from punkts import Punkts
+from windows import Show_one_day
 from updater import update
 from version import version
 from datetime import timedelta
@@ -21,7 +23,9 @@ class Main(tk.Frame):
     def __init__ (self, root):
         super().__init__ (root)
         self.db = db
+        self.punkts = self.db.db_to_class()
         self.init_main()
+        
         
 
     
@@ -56,7 +60,7 @@ class Main(tk.Frame):
         root.config(menu=menubar)
 
         # Draw Labels
-        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.todayPunkt()),bd=1,relief=tk.SUNKEN,anchor=tk.W)
+        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.punkts.today_punkts(name_only = True)),bd=1,relief=tk.SUNKEN,anchor=tk.W)
         label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
         
@@ -140,7 +144,7 @@ class Main(tk.Frame):
         To_Exel()
 
     def open_Show(self):
-        ShowOneDay()
+        Show_one_day.ShowOneDay(root, self.punkts)
 
 
 class Change(tk.Toplevel):
@@ -997,51 +1001,6 @@ class To_Exel(tk.Toplevel):
         self.grab_set()
         self.focus_set()
 
-
-class ShowOneDay(tk.Toplevel):
-    
-    def __init__ (self):
-        super().__init__ (root)
-        self.main=app
-        self.db=db
-        self.show_onedaypunkt()
-        
-    
-
-    def myWrap(self,string, lenght=8):
-        return '\n'.join(textwrap.wrap(string, lenght))
-
-    
-    def show_onedaypunkt (self):
-        self.title("Вывести в Exel")
-        self.geometry("400x600")
-
-        self.style=ttk.Style(self)
-        self.style.configure('mystyle.Treeview',rowheight=110)
-        
-        self.sctribeTree=ttk.Treeview(self,columns=('id','description'),height=40,show='headings',style="mystyle.Treeview")
-       
-        self.sctribeTree.column('id',width=60,anchor=tk.N)
-        self.sctribeTree.column('description',width=340,anchor=tk.N)
-        self.sctribeTree.heading('id',text='пункт')
-        self.sctribeTree.heading('description',text='описание')
-        self.sctribeTree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
-
-        self.scrollbar = ttk.Scrollbar(self,orient='vertical',command=self.sctribeTree.yview)
-        self.scrollbar.pack( side = tk.RIGHT, fill = tk.Y )
-         
-        
-        self.sctribeTree.configure(yscrollcommand=self.scrollbar.set)
-        
-        i=0
-        print(self.main.todayPunkt())
-        for x in self.main.todayPunkt():
-            item = self.sctribeTree.insert("", "end", values=(x, '\n'.join(textwrap.wrap(str(db.read_data(str(x)))[3:-6], 45))))
-            i+=1
-        
-        self.grab_set()
-        self.focus_set()
-
         
 
 class DB:
@@ -1054,6 +1013,7 @@ class DB:
                         instruction text, comand text, Maker text, equipment text, shiftweek integer)''')
         self.c.execute('''select * from weekSchedule''')
         self.conn.commit()
+        self.punkts = Punkts.Punkts()
 
                
     def insert_data(self, num, description, whenW, whenD,yearM,inst,coma,make,equip,number):
@@ -1074,12 +1034,9 @@ class DB:
         return self.c.fetchall()
 
     def db_to_class(self):
-        punkts = Punkts.Punkts()
-        for punkt in self.c.execute("SELECT id, * FROM weekSchedule"):
-            punkts.add_punkt(punkt)
-        return punkts
-    
-       
+        self.punkts.fill_punkts(self.c.execute("SELECT id, * FROM weekSchedule"))
+        return self.punkts
+        
     def __del__(self):     
         self.conn.close()
 

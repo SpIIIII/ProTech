@@ -1,8 +1,37 @@
+import datetime
+
 class Punkts:
-    def __init__(self):
-        self.all_punkts = list()
-        
-    def is_on_date(self,date):
+    class __Punkts():
+        def __init__(self):
+            self.all_punkts = list()
+
+        def today_punkts (self, date=datetime.datetime.now(), name_only = False):
+            if name_only:
+                return [punkt.name for punkt in self.all_punkts if punkt.is_today(date)]
+            else:
+                return [punkt for punkt in self.all_punkts if punkt.is_today(date)]    
+
+        def fill_punkts(self, punkts):
+            self.all_punkts = list()
+            for punkt in punkts:
+                self.all_punkts.append(Punkt(punkt))
+
+    instance = None
+
+    def __new__(cls):
+        if not Punkts.instance:
+            Punkts.instance = Punkts.__Punkts()
+        return Punkts.instance
+    
+
+    
+
+class Punkt:
+    def __init__ (self,*args):
+        self.name,self.description,self.period,self.day_of_week,self.month,self.instruction,\
+        self.order,self.responsible,self.equipment,self.shift_week = args[0][1:]
+
+    def is_today (self,date):
         now = date        
         now_weekday=(now.weekday())       
         
@@ -43,15 +72,7 @@ class Punkts:
                      if (47+now_week+associationforMonth[self.month]+self.shift_week)%52==0:
                         if association[self.day_of_week]==now_weekday:
                             return(True)
-        return(False)
-
-    def add_punkt(self, *args):
-        self.all_punkts.append(Punkt(args))
-
-class Punkt:
-    def __init__ (self,*args):
-        self.name,self.description,self.period,self.day_of_week,self.month,self.instruction,\
-        self.order,self.responsible,self.equipment,self.shift_week = args[0][0][1:]
+        return(False) 
 
     def __repr__(self):
         return f"===============\nпункт: {self.name}\nописание: {self.description}\
