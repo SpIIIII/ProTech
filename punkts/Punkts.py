@@ -1,30 +1,57 @@
 import datetime
 
+class PunktsIterator:
+    def __init__(self,punkts):
+        self._punkts = punkts
+        self.index = 0
+    def __next__(self):
+        if self.index < len(self._punkts.all_punkts):
+            res = self._punkts.all_punkts[self.index]
+            self.index+=1
+            return res
+        raise StopIteration
+
 class Punkts:
     class __Punkts():
-        def __init__(self):
-            self.all_punkts = list()
+        """ class for manages all punkts
+        """
+        def __init__(self,db):
+            self.db=db
+            self.fill_punkts()
+            
+        def __iter__(self):
+            return(PunktsIterator(self))
 
-        def today_punkts (self, date=datetime.datetime.now(), name_only = False):
+        def fill_punkts(self):
+            self.all_punkts = list()
+            for punkt in self.db.c.execute("SELECT id, * FROM weekSchedule"):
+                self.all_punkts.append(Punkt(punkt))
+
+        def get_punkts(self,*name)->list:
+            return [punkt for punkt in self.all_punkts if punkt.name in name]
+
+        def re_read(self):
+            self.fill_punkts()
+            return self
+
+        def today_punkts (self, date:datetime=datetime.datetime.now(), name_only = False)->list:
             if name_only:
                 return [punkt.name for punkt in self.all_punkts if punkt.is_today(date)]
             else:
-                return [punkt for punkt in self.all_punkts if punkt.is_today(date)]    
+                return [punkt for punkt in self.all_punkts if punkt.is_today(date)]  
+                
+        def update_punct(self, description, period, week_day, month, instruction, order, responsible, equipment, name, shift):
+            self.db.update_data(description, period, week_day, month,
+                                instruction, order, responsible,
+                                equipment, name, shift)  
 
-        def fill_punkts(self, punkts):
-            self.all_punkts = list()
-            for punkt in punkts:
-                self.all_punkts.append(Punkt(punkt))
 
     instance = None
-
-    def __new__(cls):
+    def __new__(cls,db):
         if not Punkts.instance:
-            Punkts.instance = Punkts.__Punkts()
+            Punkts.instance = Punkts.__Punkts(db)
         return Punkts.instance
-    
 
-    
 
 class Punkt:
     def __init__ (self,*args):

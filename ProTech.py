@@ -9,11 +9,11 @@ import os
 
 from tkinter import ttk
 from punkts import Punkts
-from windows import Show_one_day
 from updater import update
-from version import version
+from version import Version
 from datetime import timedelta
 from tkinter import messagebox
+from windows import Show_one_day, Change_punkt
 
 
 
@@ -23,16 +23,15 @@ class Main(tk.Frame):
     def __init__ (self, root):
         super().__init__ (root)
         self.db = db
-        self.punkts = self.db.db_to_class()
+        self.version = Version.Versions()
+        self.punkts = Punkts.Punkts(db)
         self.init_main()
         
         
-
-    
     def init_main(self):
 
         self.now1 = datetime.datetime.now()
-        self.version = version.Versions()
+        
         self.updater = update.Update(self.version)
         '''
         association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
@@ -46,9 +45,9 @@ class Main(tk.Frame):
         menubar = tk.Menu()
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Добавить пункт", command=self.add_new_punkt)
-        filemenu.add_command(label="Обновить список", command=self.view_records1)
+        filemenu.add_command(label="Обновить список", command=self.refresh_tree_view)
         filemenu.add_command(label="в Exel", command=self.open_To_Exel)
-        filemenu.add_command(label="test", command=self.db.db_to_class)
+        # filemenu.add_command(label="test", command=self.db.db_to_class)
         filemenu.add_separator()
         filemenu.add_command(label="Выход", command=root.quit)
 
@@ -78,11 +77,12 @@ class Main(tk.Frame):
         self.tree.heading('month', text='день')
         self.tree.bind('<Button-3>',self.select)
         self.tree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
-        self.view_records()
+        self.fill_tree_view()
         
         # Create a popup menu
         self.aMenu = tk.Menu(self, tearoff=0)
-        self.aMenu.add_command(label='Изменить', command=self.hello)
+        self.aMenu.add_command(label='Изменить', command=self.change_selected_punkt)
+        self.aMenu.add_command(label='Добавить', command=self.add_new_punkt)
         self.aMenu.add_separator()
         self.aMenu.add_command(label='Удалить', command=self.delete)
 
@@ -92,12 +92,10 @@ class Main(tk.Frame):
         """action in event of button 3 on tree view"""
         # select row under mouse
         iid = self.tree.identify_row(event.y)
-        #print(type(iid), iid)
         if iid:
             # mouse pointer over item
             self.tree.selection_set(iid)
             self.aMenu.post(event.x_root, event.y_root)
-
         else:
            pass
 
@@ -105,37 +103,21 @@ class Main(tk.Frame):
         item = self.tree.selection()[0]
         #print(self.tree.item(item,'values')[0])
         self.db.delet_data(self.tree.item(item,'values')[0])
-        self.view_records1()
+        self.refresh_tree_view()
 
-    def hello(self):
+    def change_selected_punkt(self):
         item = self.tree.selection()[0]
-        mypunkt=self.tree.item(item,'values')[0]
-        self.db.c.execute('''SELECT * FROM weekSchedule WHERE id =? ''',(mypunkt,))
-        Change(mypunkt)
+        punkt_name = self.tree.item(item,'values')[0]
+        Change_punkt.Change(self.punkts.get_punkts(punkt_name), self.punkts, self, root) 
        
-    def view_records(self):
-        self.db.c.execute('''SELECT * FROM weekSchedule ''')
-        #self.db.c.close()
-        for row in self.db.c.fetchall():
-            #print(self.db.c.fetchall())
-            self.tree.insert('', 'end', values=row)
+    def fill_tree_view(self):
+        for row in self.punkts.re_read():
+            self.tree.insert('', 'end', values=(row.name,row.description,row.period,row.day_of_week))
         
-    def view_records1(self):
+    def refresh_tree_view(self):
         for i in self.tree.get_children():
             self.tree.delete(i)
-
-        self.db.c.execute('''SELECT * FROM weekSchedule ''')
-        for row in self.db.c.fetchall():
-            #print(row)
-            self.tree.insert('', 'end', values=row)
-
-    def todayPunkt(self):
-        self.todayToDo=[]
-        for row in self.db.c.execute("SELECT id, * FROM weekSchedule"):
-            if calculateOneDay(row,self.now1):
-                self.todayToDo.append(row[1])
-        
-        return self.todayToDo
+        self.fill_tree_view()
 
     def add_new_punkt(self):
         New_Punkt()
@@ -148,10 +130,11 @@ class Main(tk.Frame):
 
 
 class Change(tk.Toplevel):
-    def __init__ (self, onePunkt):
+    def __init__ (self, onePunkt, punkts, mein):
         super().__init__ (root)
-        self.main=app
-        self.db=db
+        self.main=mein
+        self.chengebl_punkt = onePunkt[0]
+        self.punkts = punkts
         self.init_change(onePunkt)
 
     def init_change(self,onePunkt):
@@ -159,8 +142,7 @@ class Change(tk.Toplevel):
         self.geometry("600x350")
         self.minsize(600,350)
 
-        self.db.c.execute('''SELECT * FROM weekSchedule WHERE id =? ''',(onePunkt,))
-        self.myPunkts = self.db.c.fetchall()
+        print(self.chengebl_punkt)
         
         def lurker2(event):
             #print("in psate "+ self.selection_get(selection='CLIPBOARD'))
@@ -181,60 +163,60 @@ class Change(tk.Toplevel):
 
         self.lable_punkt=tk.Label(self,text="Пункт")
         self.lable_punkt.place(x=15,y=20)
-        self.entry_punkt=ttk.Label(self,text=self.myPunkts[0][0])
+        self.entry_punkt=ttk.Label(self,text=self.chengebl_punkt.name)
         self.entry_punkt.place(x=100,y=20)
 
         self.lable_inst=tk.Label(self,text="Инструкция")
         self.lable_inst.place(x=15,y=50)
         self.entry_inst=ttk.Entry(self)
-        self.entry_inst.insert(0,self.myPunkts[0][5])
+        self.entry_inst.insert(0,self.chengebl_punkt.instruction)
         self.entry_inst.place(x=100,y=50)
 
         self.lable_prikaz=tk.Label(self,text="Приказ")
         self.lable_prikaz.place(x=15,y=80)
         self.entry_prikaz=ttk.Entry(self)
-        self.entry_prikaz.insert(0,self.myPunkts[0][6])
+        self.entry_prikaz.insert(0,self.chengebl_punkt.order)
         self.entry_prikaz.place(x=100,y=80)
 
         self.lable_isp=tk.Label(self,text="Исполнитель")
         self.lable_isp.place(x=15,y=110)
         self.entry_isp=ttk.Entry(self)
-        self.entry_isp.insert(0,self.myPunkts[0][7])
+        self.entry_isp.insert(0,self.chengebl_punkt.responsible)
         self.entry_isp.place(x=100,y=110)
 
         self.lable_obor=tk.Label(self,text="Оборудование")
         self.lable_obor.place(x=15,y=140)
         self.entry_obor=ttk.Entry(self)
-        self.entry_obor.insert(0,self.myPunkts[0][8])
+        self.entry_obor.insert(0,self.chengebl_punkt.equipment)
         self.entry_obor.place(x=100,y=140)
 
-        if self.myPunkts[0][2]==' ежедневно' or self.myPunkts[0][2]==' раз в неделю' or self.myPunkts[0][2]==' раз в 2 недели' or self.myPunkts[0][2]==' раз в 4 недели':
+        if self.chengebl_punkt.period==' ежедневно' or self.chengebl_punkt.period==' раз в неделю' or self.chengebl_punkt.period==' раз в 2 недели' or self.chengebl_punkt.period==' раз в 4 недели':
             self.lable_punkt=tk.Label(self,text="Периодичность")
             self.lable_punkt.place(x=240,y=50)
             self.combobox1=ttk.Combobox(self,values=[u' ежедневно',u' раз в неделю',u' раз в 2 недели',u' раз в 4 недели'])
-            self.combobox1.current(association_cicle[self.myPunkts[0][2]])
+            self.combobox1.current(association_cicle[self.chengebl_punkt.period])
             self.combobox1.place(x=360,y=50)
 
         self.lable_punkt=tk.Label(self,text="День недели")
         self.lable_punkt.place(x=240,y=20)
         self.combobox2=ttk.Combobox(self,values=[u' пн.',u' вт.',u' ср.',u' чт.',u' пт.'])
-        self.combobox2.current(association[self.myPunkts[0][3]])
+        self.combobox2.current(association[self.chengebl_punkt.day_of_week])
         self.combobox2.place(x=360,y=20)
 
         self.comboboxYear=ttk.Combobox(self,values=[u' Январь',u' Февраль',u' Март',u' Апрель',u' Май',u' Июнь',u' Июль',u' Август', u' Сентябрь',u' Октябрь',u' Ноябрь',u' Декабрь'])
-        self.comboboxYear.current(associationforMonth[self.myPunkts[0][4]])
+        self.comboboxYear.current(associationforMonth[self.chengebl_punkt.month])
 
         self.label_shift=tk.Label(self,text="Сдвинуть на")
         self.label_shift.place(x=290,y=140)
         self.entry_shift=ttk.Entry(self)
-        self.entry_shift.insert(0,self.myPunkts[0][9])
+        self.entry_shift.insert(0,self.chengebl_punkt.shift_week)
         self.entry_shift.place(x=360,y=140)
         self.label_shift2=tk.Label(self,text="неделю")
         self.label_shift2.place(x=460,y=140)
 
        
-        if self.myPunkts[0][2]==' раз в 6 месяцев' or self.myPunkts[0][2]==' раз в 3 месяца' or self.myPunkts[0][2]==' раз 12 месяцев':
-            #print (self.myPunkts[0][2])
+        if self.chengebl_punkt.period==' раз в 6 месяцев' or self.chengebl_punkt.period==' раз в 3 месяца' or self.chengebl_punkt.period==' раз 12 месяцев':
+            #print (self.chengebl_punkt.period)
             self.lable_punkt=tk.Label(self,text="Месяц")
             self.lable_punkt.place(x=240,y=80)
             
@@ -243,7 +225,7 @@ class Change(tk.Toplevel):
             self.lable_punkt=tk.Label(self,text="Периодичность")
             self.lable_punkt.place(x=240,y=50)
             self.combobox1=ttk.Combobox(self,values=[u' раз в 3 месяца',u' раз в 6 месяцев',u' раз 12 месяцев'])
-            self.combobox1.current(association_cicle[self.myPunkts[0][2]]-4)
+            self.combobox1.current(association_cicle[self.chengebl_punkt.period]-4)
             self.combobox1.place(x=360,y=50)
 
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
@@ -255,12 +237,12 @@ class Change(tk.Toplevel):
         self.entry_de2.bind('<Control-v>')
         self.entry_de2.bind('<Control-igrave>', lurker2)
         self.entry_de2.bind('<Control-ntilde>', lurker)
-        self.entry_de2.insert("insert", self.myPunkts[0][1])
+        self.entry_de2.insert("insert", self.chengebl_punkt.description)
         self.entry_de2.place(x=15, y=170)
 
-        button_add= ttk.Button(self,text = "Изменить",command=self.main.view_records1 )
+        button_add= ttk.Button(self,text = "Изменить",command=self.main.refresh_tree_view )
         button_add.place(x=13,y =300)
-        button_add.bind('<Button-1>', lambda event1: self.db.update_data(self.entry_de2.get('1.0', tk.END),
+        button_add.bind('<Button-1>', lambda event1: self.punkts.update_punct(self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),
                                                                         self.comboboxYear.get(),
@@ -268,7 +250,7 @@ class Change(tk.Toplevel):
                                                                         self.entry_prikaz.get(),
                                                                         self.entry_isp.get(),
                                                                         self.entry_obor.get(),
-                                                                        self.myPunkts[0][0],
+                                                                        self.chengebl_punkt.name,
                                                                         self.entry_shift.get()
                                                                          ) 
                                                                         )
@@ -462,13 +444,13 @@ class New_Punkt(tk.Toplevel):
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
         button_cancel.place(x=100,y =377)
 
-        button_del= ttk.Button(self, text='Удалить', command=self.main.view_records1)
+        button_del= ttk.Button(self, text='Удалить', command=self.main.refresh_tree_view)
         button_del.place(x=270,y =377)
         button_del.bind('<Button-1>', lambda event2: self.db.delet_data(self.entry_de1.get()+' '))
 
 
 
-        button_add= ttk.Button(self,text = "add",command=self.main.view_records1)
+        button_add= ttk.Button(self,text = "add",command=self.main.refresh_tree_view)
         button_add.place(x=13,y =377)
         button_add.bind('<Button-1>', lambda event1: self.db.insert_data(self.entry_de1.get()+' ',
                                                                         self.entry_de2.get('1.0', tk.END),
@@ -1013,7 +995,6 @@ class DB:
                         instruction text, comand text, Maker text, equipment text, shiftweek integer)''')
         self.c.execute('''select * from weekSchedule''')
         self.conn.commit()
-        self.punkts = Punkts.Punkts()
 
                
     def insert_data(self, num, description, whenW, whenD,yearM,inst,coma,make,equip,number):
@@ -1025,17 +1006,16 @@ class DB:
         self.c.execute('''DELETE FROM weekSchedule WHERE id =? ''',(n,))
         self.conn.commit()
 
-    def update_data(self, description, whenW, whenD,yearM,inst,coma,make,equip,num,number):
-        self.c.execute('''UPDATE weekSchedule SET description = ?, whatweek = ?, whatday = ?, yearMonth = ?, instruction = ?, comand = ?, Maker = ?, equipment = ?, shiftweek = ? WHERE id = ?''',(description, whenW, whenD, yearM, inst, coma, make, equip, number, num,))
+    def update_data(self, description, whenW, whenD, yearM, inst, coma, make, equip, num, number):
+        self.c.execute('''UPDATE weekSchedule SET description = ?, whatweek = ?, whatday = ?, yearMonth = ?, \
+            instruction = ?, comand = ?, Maker = ?, equipment = ?, shiftweek = ? WHERE id = ?''',
+        (description, whenW, whenD, yearM, inst, coma, make, equip, number, num,))
         self.conn.commit()
         
     def read_data(self,num):
         self.c.execute('''SELECT description FROM weekSchedule WHERE id =?''',(num,))
         return self.c.fetchall()
 
-    def db_to_class(self):
-        self.punkts.fill_punkts(self.c.execute("SELECT id, * FROM weekSchedule"))
-        return self.punkts
         
     def __del__(self):     
         self.conn.close()
@@ -1091,7 +1071,7 @@ if __name__ ==  "__main__":
     IS_WINDOWS = True if platform.system() == 'Windows' else False
     root=tk.Tk()
     db=DB()
-    app = Main (root)
+    app = Main(root)
     app.pack()
     root.title("Техпроцесс")
     root.geometry("580x350+300+220")

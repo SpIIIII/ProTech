@@ -9,13 +9,10 @@ class ShowOneDay(tk.Toplevel):
         super().__init__ (root)
         self.punkts = punkts
         self.show_onedaypunkt()
-        
-    
 
     def myWrap(self,string, lenght=8):
         return '\n'.join(textwrap.wrap(string, lenght))
 
-    
     def show_onedaypunkt (self):
         self.title("Вывести в Exel")
         self.geometry("500x600")

@@ -34,7 +34,7 @@ class Update:
             MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.versions.local_version_txt} версия для обновления - {self.versions.remote_version}.\n\
                                                     Обновить?')
             if MsgBox == 'yes':
-                tk.messagebox.showinfo('Обновление','Дождитесь пока будет скачена новая версия.\n После скачивания программа будет закрыта, \
+                tk.messagebox.showinfo('Обновление','Дождитесь пока будет скачана новая версия.\n После скачивания программа будет закрыта, \
                                         когда запуститься процесс установки следуйте инструкциям')
                 return True
             else:
