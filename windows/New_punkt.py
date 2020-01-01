@@ -1,11 +1,13 @@
-
+import tkinter as tk
+from tkinter import ttk
 
 class New_Punkt(tk.Toplevel):
-    def __init__ (self,root):
+
+    def __init__ (self, punkts, main, root):
         super().__init__ (root)
-        self.db=db
-        self.main=app
-        self.init_child()
+        self.punkts=punkts
+        self.main=main
+        self.init_new_punkt()
 
 
     def on_entry_click(self,event):
@@ -14,6 +16,7 @@ class New_Punkt(tk.Toplevel):
             self.entry_de1.delete(0, "end") # delete all the text in the entry
             self.entry_de1.insert(0, '') #Insert blank for user input
             self.entry_de1.configure(style="Black.TEntry")
+            
     def on_focusout(self,event):
         if self.entry_de1.get() == '':
             self.entry_de1.insert(0, 'п 1.5  ')
@@ -64,7 +67,7 @@ class New_Punkt(tk.Toplevel):
             self.entryOborud.configure(style="Red.TEntry")
 
 
-    def init_child(self):
+    def init_new_punkt(self):
         self.var = tk.IntVar()
         self.title("Добавить пункт")
         self.geometry("432x411+550+250")
@@ -188,15 +191,15 @@ class New_Punkt(tk.Toplevel):
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
         button_cancel.place(x=100,y =377)
 
-        button_del= ttk.Button(self, text='Удалить', command=self.main.view_records1)
+        button_del= ttk.Button(self, text='Удалить', command=self.main.refresh_tree_view)
         button_del.place(x=270,y =377)
-        button_del.bind('<Button-1>', lambda event2: self.db.delet_data(self.entry_de1.get()+' '))
+        button_del.bind('<Button-1>', lambda event2: self.punkts.delete_punkts(self.entry_de1.get()+' '))
 
 
 
-        button_add= ttk.Button(self,text = "add",command=self.main.view_records1)
+        button_add= ttk.Button(self,text = "add",command=self.main.refresh_tree_view)
         button_add.place(x=13,y =377)
-        button_add.bind('<Button-1>', lambda event1: self.db.insert_data(self.entry_de1.get()+' ',
+        button_add.bind('<Button-1>', lambda event1: self.punkts.insert_punkt(self.entry_de1.get()+' ',
                                                                         self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),
@@ -205,13 +208,7 @@ class New_Punkt(tk.Toplevel):
                                                                         self.entryComand.get(),
                                                                         self.entryMaker.get(),
                                                                         self.entryOborud.get(),
-                                                                        0
-                                                                         ) 
-                                                                        )
-        
-
-
-
+                                                                        0))
         self.grab_set()
         self.focus_set()
-                
+  

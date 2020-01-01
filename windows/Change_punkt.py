@@ -13,17 +13,13 @@ class Change(tk.Toplevel):
         self.title("Изменение пункта")
         self.geometry("600x350")
         self.minsize(600,350)
-
-        print(self.chengebl_punkt)
         
         def lurker2(event):
-            #print("in psate "+ self.selection_get(selection='CLIPBOARD'))
             self.entry_de2.insert("insert", self.selection_get(selection='CLIPBOARD'))
             
         def lurker(event_obj):
             self.clipboard_clear()
             self.clipboard_append(self.entry_de2.get('1.0', tk.END))
-            #print("in 2clip "+self.entry_de2.get('1.0', tk.END))
 
 
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
@@ -88,7 +84,6 @@ class Change(tk.Toplevel):
 
        
         if self.chengebl_punkt.period==' раз в 6 месяцев' or self.chengebl_punkt.period==' раз в 3 месяца' or self.chengebl_punkt.period==' раз 12 месяцев':
-            #print (self.chengebl_punkt.period)
             self.lable_punkt=tk.Label(self,text="Месяц")
             self.lable_punkt.place(x=240,y=80)
             
@@ -114,7 +109,7 @@ class Change(tk.Toplevel):
 
         button_add= ttk.Button(self,text = "Изменить",command=self.main.refresh_tree_view )
         button_add.place(x=13,y =300)
-        button_add.bind('<Button-1>', lambda event1: self.punkts.update_punct(self.entry_de2.get('1.0', tk.END),
+        button_add.bind('<Button-1>', lambda event1: self.chengebl_punkt.update(self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),
                                                                         self.comboboxYear.get(),
@@ -123,6 +118,5 @@ class Change(tk.Toplevel):
                                                                         self.entry_isp.get(),
                                                                         self.entry_obor.get(),
                                                                         self.chengebl_punkt.name,
-                                                                        self.entry_shift.get()
-                                                                         ),print('work') 
+                                                                        self.entry_shift.get())
                                                                         )
