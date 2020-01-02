@@ -116,13 +116,11 @@ class To_Exel(tk.Toplevel):
         #print(self.desktop+'/Оперативный %s %i.xls'%(self.combobox1.get(),self.now1.year))
         book.save(self.desktop+'/Оперативный %s %i.xls'%(self.combobox1.get(),self.now1.year))
                    
-        
     def caclulateExelFor(self,dayPunkt,yearPunkt):
 
         self.punktNumber=[i.name for i in self.punkts]
         self.textPunktNumber=''
         self.CreateExelFor(dayPunkt,yearPunkt)
-
 
     def CreateExelFor(self,nowWithMonth,realNow):
 
@@ -131,15 +129,15 @@ class To_Exel(tk.Toplevel):
         sheet=book.add_sheet('sheetname',cell_overwrite_ok=True)
 
         font1 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold on, italic off;\
-       align: wrap off, vert top, horiz left;')
+            align: wrap off, vert top, horiz left;')
         font2 = xlwt.easyxf('font: height 260,name Times_New_Roman,colour_index black, bold on, italic off;\
-       align: vertical center, horizontal center, wrap off;')
+            align: vertical center, horizontal center, wrap off;')
         font3 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold off, italic off;\
-     align: vertical top, horizontal center, wrap on;\
-    borders: left thin, right thin, top thin, bottom thin;')
+            align: vertical top, horizontal center, wrap on;\
+            borders: left thin, right thin, top thin, bottom thin;')
         font4 = xlwt.easyxf('font: height 220,name Times New Roman,colour_index black, bold off, italic off;\
-     align: vertical top, horizontal center, wrap on;\
-    borders: left thin, right thin, top thin, bottom thin;')
+            align: vertical top, horizontal center, wrap on;\
+            borders: left thin, right thin, top thin, bottom thin;')
         
         sheet.row(12).height_mismatch = True
         sheet.row(12).height = 1500
@@ -178,8 +176,6 @@ class To_Exel(tk.Toplevel):
             for y in range (14):
                 sheet.write(9+i,10+y,'',font3)
             while (10+w+self.startday) <= 23 and e in range(calendar.mdays[forNow.month]):
-                #print (9+i,10+self.startday+w,'in calendar',e,i)
-                
                 sheet.write(9+i,10+self.startday+w,dayvar,font4)
                 dayvar+=1
                 e+=1

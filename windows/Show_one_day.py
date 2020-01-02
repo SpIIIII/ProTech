@@ -38,7 +38,7 @@ class ShowOneDay(tk.Toplevel):
         for x in self.punkts.today_punkts(name_only = False):
             self.sctribeTree.insert("", "end", values=(x.name, '\n'.join(textwrap.wrap(x.description,35))))
             
-        
+        self.wait_visibility()
         self.grab_set()
         self.focus_set()
 

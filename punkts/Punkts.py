@@ -13,7 +13,7 @@ class Punkt:
             return True
         return False
         
-    def is_today (self, date, annual:bool)->bool:
+    def is_today (self, date, annual=None)->bool:
         now = date        
         now_weekday=(now.weekday())       
         
@@ -21,6 +21,43 @@ class Punkt:
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
         associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
+
+        if annual is None:
+            if now_weekday !=6 and now_weekday !=5 :
+                if self.period == ' ежедневно':
+                    return(True)
+
+                elif str(self.period) == str(' раз в неделю'):
+                    if association[self.day_of_week]==now_weekday:
+                        return(True)
+
+                elif str(self.period) == str(' раз в 2 недели'):
+                    if (now_week+self.shift_week)%2==0:
+                        if association[self.day_of_week]==now_weekday:
+                            return(True)
+                                    
+                elif str(self.period) == str(' раз в 4 недели'):
+                    if (now_week+self.shift_week)%4==0:
+                        if association[self.day_of_week]==now_weekday:
+                            return(True)
+
+                elif str(self.period) == str(' раз в 3 месяца'):
+                    if (self.shift_week+now_week+(4*(13-associationforMonth[self.month])))%13==0:
+                        if association[self.day_of_week]==now_weekday:
+                            return(True)
+                
+                elif str(self.period) == str(' раз в 6 месяцев'):
+                    if (self.shift_week+now_week+(4*(13-associationforMonth[self.month])))%26==0:
+                        if association[self.day_of_week]==now_weekday:
+                            return(True)                  
+                
+                elif str(self.period) == str(' раз 12 месяцев'):
+                    if (self.shift_week+now_week+(4*(13-associationforMonth[self.month])))%52==0:
+                        if (47+now_week+associationforMonth[self.month]+self.shift_week)%52==0:
+                            if association[self.day_of_week]==now_weekday:
+                                return(True)
+        
+            return False
 
         if annual == self.is_annual():
             if now_weekday !=6 and now_weekday !=5 :
@@ -75,9 +112,6 @@ class Punkt:
 
 
 
-
-
-
 class PunktsIterator:
     def __init__(self,punkts):
         self._punkts = punkts
@@ -118,7 +152,7 @@ class Punkts:
             self.fill_punkts()
             return self
 
-        def month_punkts(self,date:datetime=datetime.datetime.now(), name_only=True, without_holidays=True, annual:bool=False)->list:
+        def month_punkts(self,date:datetime=datetime.datetime.now(), name_only=True, without_holidays=True, annual=None)->list:
             month = date.month
             day_for_calc = date.replace(day = 1)
             month_punkts=list()
@@ -132,7 +166,7 @@ class Punkts:
                 day_for_calc+=datetime.timedelta(1)
             return month_punkts
 
-        def today_punkts (self, date:datetime=datetime.datetime.now(), name_only:bool=True, annual:bool=False)->list:
+        def today_punkts (self, date:datetime=datetime.datetime.now(), name_only:bool=True, annual=None)->list:
             if name_only:
                 return [punkt.name for punkt in self.all_punkts if punkt.is_today(date, annual)]
             else:
@@ -143,7 +177,6 @@ class Punkts:
                                 month, instruction, order, responsible,
                                 equipment, shift)
                                 
-
     instance = None
     def __new__(cls,db):
         if not Punkts.instance:

@@ -16,8 +16,9 @@ if __name__ ==  "__main__":
     root=tk.Tk()
 
     db=DB.DB()
-    plot = Plot.Plot()
+    
     punkts = Punkts.Punkts(db)
+    plot = Plot.Plot(punkts)
     version = Version.Versions()
     updater = update.Update(version)
 

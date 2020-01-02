@@ -1,15 +1,16 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import datetime as dt
 import numpy as np
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class Plot:
-    def __init__ (self):
-        pass
+    def __init__ (self, punkts):
+        self.punkts = punkts
     
-    def draw_plot(self,frame):
+    def draw_plot(self,frame, date=dt.datetime.now()):
         with plt.style.context('seaborn-white'):
             fig = plt.figure()
             ax = plt.axes(projection='3d')
@@ -26,7 +27,7 @@ class Plot:
             dx = dy = 0.5 * np.ones_like(zpos)
             dz = hist.ravel()
             [print(i) for i in (xpos, ypos, zpos, dx, dy, dz)]
-            ax.bar3d(xpos, ypos, zpos, dx, dy, 1, zsort='average')
+            ax.bar3d(xpos, ypos, zpos, 0.1, 0.1, 1, zsort='average')
         
             canvas = FigureCanvasTkAgg(fig, master=frame)
             canvas.get_tk_widget().pack()
