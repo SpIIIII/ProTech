@@ -6,12 +6,14 @@ from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis
 
 class Main(tk.Frame):
 
-    def __init__ (self, root, punkts, veison, updater):
+    def __init__ (self, root, punkts, veison, updater, plot):
         super().__init__ (root)
         self.root = root
+        self.plot = plot
         self.updater = updater
         self.version = veison
         self.punkts = punkts
+        root.protocol("WM_DELETE_WINDOW", root.quit)
         self.init_main()
         
         
@@ -110,10 +112,10 @@ class Main(tk.Frame):
         New_punkt.New_Punkt(self.punkts, self, self.root)
 
     def open_To_Exel(self):
-        To_exel.To_Exel(self.root,self.punkts)
+        To_exel.To_Exel(self.root, self.punkts)
 
     def open_Show(self):
         Show_one_day.ShowOneDay(self.root, self.punkts)
 
     def open_Analysis(self):
-        Analysis.Analysis(self.root,self.punkts)
+        Analysis.Analysis(self.root, self.punkts, self.plot)

@@ -7,6 +7,7 @@ class New_Punkt(tk.Toplevel):
         super().__init__ (root)
         self.punkts=punkts
         self.main=main
+        self.bind('<Escape>', lambda e: self.destroy())
         self.init_new_punkt()
 
 

@@ -8,6 +8,7 @@ class ShowOneDay(tk.Toplevel):
     def __init__ (self,root, punkts):
         super().__init__ (root)
         self.punkts = punkts
+        self.bind('<Escape>', lambda e: self.destroy())
         self.show_onedaypunkt()
 
     def myWrap(self,string, lenght=8):
@@ -34,7 +35,7 @@ class ShowOneDay(tk.Toplevel):
         
         self.sctribeTree.configure(yscrollcommand=self.scrollbar.set)
    
-        for x in self.punkts.today_punkts():
+        for x in self.punkts.today_punkts(name_only = False):
             self.sctribeTree.insert("", "end", values=(x.name, '\n'.join(textwrap.wrap(x.description,35))))
             
         
