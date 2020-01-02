@@ -1,7 +1,7 @@
 import tkinter as tk
 import datetime
 from tkinter import ttk
-from . import Show_one_day, Change_punkt, New_punkt, To_exel 
+from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis
 
 
 class Main(tk.Frame):
@@ -33,8 +33,9 @@ class Main(tk.Frame):
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Добавить пункт", command=self.add_new_punkt)
         filemenu.add_command(label="Обновить список", command=self.refresh_tree_view)
+        filemenu.add_command(label="Анализ", command=self.open_Analysis)
         filemenu.add_command(label="в Exel", command=self.open_To_Exel)
-        # filemenu.add_command(label="test", command=self.db.db_to_class)
+        
         filemenu.add_separator()
         filemenu.add_command(label="Выход", command=self.root.quit)
 
@@ -113,3 +114,6 @@ class Main(tk.Frame):
 
     def open_Show(self):
         Show_one_day.ShowOneDay(self.root, self.punkts)
+
+    def open_Analysis(self):
+        Analysis.Analysis(self.root,self.punkts)
