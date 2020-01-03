@@ -277,7 +277,6 @@ class To_Exel(tk.Toplevel):
         sheet.set_print_scaling(100)
         book.save(self.desktop+'/Четырёхнедельный %s %i.xls'%(self.combobox1.get(),self.now1.year) ) 
 
-    
     def WhatDistant(self,targetText):
         return (len(targetText)//20+1)*300
 
@@ -287,11 +286,13 @@ class To_Exel(tk.Toplevel):
             self.entry_utv.delete(0, "end") # delete all the text in the entry
             self.entry_utv.insert(0, '') #Insert blank for user input
             self.entry_utv.configure(style="Black.TEntry")
+
     def on_entry_click1(self,event):
         if self.entry_set.get() == 'ШНС Шипин':
-            self.entry_set.delete(0, "end") # delete all the text in the entry
-            self.entry_set.insert(0, '') #Insert blank for user input
-            self.entry_set.configure(style="Black.TEntry")#entry.config(fg = 'black')
+            self.entry_set.delete(0, "end")                 # delete all the text in the entry
+            self.entry_set.insert(0, '')                    #Insert blank for user input
+            self.entry_set.configure(style="Black.TEntry")  #entry.config(fg = 'black')
+
     def on_entry_click2(self,event):
         #print(self.text2)
         if self.entry_do.get('1.0', tk.END) ==self.text1:
@@ -302,15 +303,16 @@ class To_Exel(tk.Toplevel):
             self.text2=self.entry_do.get('1.0', tk.END)
             self.entry_do.config(fg = 'black')#entry.config(fg = 'black')
             
-
     def on_focusout(self,event):
         if self.entry_utv.get() == '':
             self.entry_utv.insert(0, 'ШЧУ Шинкаренко')
             self.entry_utv.configure(style="Red.TEntry")
+
     def on_focusout1(self,event):
         if self.entry_set.get() == '':
             self.entry_set.insert(0, 'ШНС Шипин')
             self.entry_set.configure(style="Red.TEntry")
+
     def on_focusout2(self,event):
         #print(self.text2)
         if self.entry_do.get('1.0', tk.END) == self.text2:
@@ -318,7 +320,6 @@ class To_Exel(tk.Toplevel):
             #print('yes i work to')
             self.entry_do.insert(tk.INSERT, self.text1)
             self.entry_do.config(fg = 'gray')
-
 
     def init_choice(self):
         self.title("Вывести в Exel")
