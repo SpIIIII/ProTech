@@ -1,7 +1,8 @@
+import matplotlib.animation as animation
 import datetime as dt
 import tkinter as tk
 from tkinter import ttk
-
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class Analysis(tk.Toplevel):
     def __init__(self,root,punkts,plot):
@@ -9,23 +10,27 @@ class Analysis(tk.Toplevel):
         self.title("Анализ")
         self.geometry("640x530")
         self.minsize(600,350)
-        self.bind('<Escape>', lambda e: self.destroy())
-
+        self.bind('<Escape>', lambda e: self.exit())
+        self.protocol("WM_DELETE_WINDOW", self.exit)
         self.plot = plot
         self.punkts = punkts
         
         self.curent_date = dt.datetime.now()
         
         self.init_analysis()
+        
 
+    def exit(self):
+        self.plot.destroy()
+        self.destroy()
     
 
     def init_analysis(self):
         
-        # function to darw plot and post it to bottom_frame
-        def draw_plot(event):
-            self.plot.draw_plot_for_month(bottom_frame,combox_punkts.get(), combox_month.get())
-
+        # inject data that need to be plotted
+        def set_data(event):
+            self.plot.set_data(bottom_frame,combox_punkts.get(), combox_month.get())
+            
         # add frames
         top_frame = ttk.Frame(self,height=50)
         top_frame.pack(side=tk.TOP,fill=tk.BOTH, expand=True)
@@ -47,14 +52,16 @@ class Analysis(tk.Toplevel):
         combox_month = ttk.Combobox(top_frame,values=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август',
                                                          'Сентябрь','Октябрь','Ноябрь','Декабрь', 'Год'],justify='center')
         combox_month.current(self.curent_date.month-1)
+        combox_month.bind("<<ComboboxSelected>>", set_data)
         combox_month.place(x=470,y=10)
-        combox_month.bind("<<ComboboxSelected>>", draw_plot)
 
+        # fill punkts initialy
         combox_punkts = ttk.Combobox(top_frame, values=[i.name for i in self.punkts],justify='center',width = 15)
         combox_punkts.current(0)
+        combox_month.bind("<<ComboboxSelected>>", set_data)
         combox_punkts.place(x=340,y=10)
-        combox_punkts.bind("<<ComboboxSelected>>", draw_plot)
 
+        # fill punkts depending of selected period
         def create_combox_punkts(event):
             period = combox_periods.get()
             if period == ' Все':
@@ -64,18 +71,25 @@ class Analysis(tk.Toplevel):
                 combox_punkts.config(values=[i.name for i in self.punkts if i.period == period])
                 combox_punkts.current(0)
             
-            
+        # form and fill period combobox
         periods = [i for i in set(i.period for i in self.punkts)]
         periods.append(' Все')
         combox_periods = ttk.Combobox(top_frame,values=periods,justify='center')
         combox_periods.current(len(periods)-1)
         combox_periods.place(x=470,y=30)
-
         combox_periods.bind("<<ComboboxSelected>>", create_combox_punkts)
+
+        # set data and plot it initialy
+        self.plot.set_data(bottom_frame,combox_punkts.get(), combox_month.get())
+        self.fig = self.plot.draw_plot_for_month(bottom_frame)
+
+        # function to call plot's update
+        def draw_plot(i):
+            self.plot.update()
+
+        # run plot updates
+        animation.FuncAnimation(self.fig, draw_plot, interval=150, blit=False)._start()
         
-        # init drawing plot
-        draw_plot(None)
-        
-        
+
         self.grab_set()
         self.focus_set()
