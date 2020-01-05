@@ -17,9 +17,10 @@ class Plot:
                                                         'Сентябрь':9,'Октябрь':10,'Ноябрь':11,'Декабрь':12}
 
     
-    def set_data (self,frame,punkt_name, month_name = 'Январь'):
+    def set_data (self, punkt_name, month_name = 'Январь'):
 
         self.month_name = month_name
+        self.punkt_to_select = punkt_name
         
         # some prerequirements for clalculations
         self.day_for_calculate = dt.datetime.now().replace(day = 1, month = self.month_association[month_name])
@@ -30,6 +31,7 @@ class Plot:
         self.week_of_month = np.array([])
         self.regular_punkts_quantity = np.array([])
         self.annual_punkts_quantity = np.array([])
+        self.selected_punkt = np.array([])
         
         # calculation to draw a plot
         for i in range(calendar.mdays[month]):
@@ -37,7 +39,8 @@ class Plot:
             self.week_of_month = np.append(self.week_of_month, self.day_for_calculate.isocalendar()[1] - self.day_for_calculate.replace(day=1).isocalendar()[1])
             self.regular_punkts_quantity = np.append(self.regular_punkts_quantity, len(self.punkts.today_punkts(self.day_for_calculate,annual = False)))
             self.annual_punkts_quantity = np.append(self.annual_punkts_quantity, len(self.punkts.today_punkts(self.day_for_calculate,annual = True)))
-            self.day_for_calculate+= dt.timedelta(1)
+            self.selected_punkt = np.append(self.selected_punkt, 1 if self.punkt_to_select in self.punkts.today_punkts(self.day_for_calculate) else 0)
+            self.day_for_calculate += dt.timedelta(1)
         self.alpha = [0 if i==0 else 1 for i in self.annual_punkts_quantity ]
         
 
@@ -51,36 +54,24 @@ class Plot:
             self.fig = plt.figure()
             self.ax = plt.axes(projection='3d')
             
-            # view settings
-            self.ax.set_title(self.month_name)
-            self.ax.set_xticks([0,1,2,3,4,5,6])
-            self.ax.set_xticklabels(['пн','вт','ср','чт','пт','сб','вс'])
-            self.ax.set_yticklabels([' ','неделя 1','неделя 2','неделя 3','неделя 4','неделя 5','неделя 6'])
-            self.ax.mouse_init(rotate_btn=1, zoom_btn=3)
-            self.ax.invert_yaxis()
-            self.ax.view_init(50,103)
-            self.ax.set_zlim((0,40))
-
-            # actualy draw a plot
-            for i in range(len(self.regular_punkts_quantity)):
-                self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], color='paleturquoise')
-                self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], self.regular_punkts_quantity[i], 0.3, 0.3,
-                             self.annual_punkts_quantity[i], color='orange', alpha = self.alpha[i],zsort='max')
-            
+            # call draw plot func
+            self.draw_plot(1)
+                       
             # set intendents from edges
-            self.fig.subplots_adjust(left=0.02, right=0.99, bottom=0.03, top=0.99)
+            self.fig.subplots_adjust(left=0.00, right=1, bottom=0.00, top=1)
 
             # post plot to tk.frame
             canvas = FigureCanvasTkAgg(self.fig, master=frame)
             canvas.get_tk_widget().pack()
-            self.ani = animation.FuncAnimation(self.fig, self.update_data, interval=150, blit=False)
-            self.ani._stop()
-            self.ax.get_children()[-1].set_edgecolor('r')
-            
-            
-    def update_data(self,i):
 
-        # redraw to update plot when new data comes
+            # setup plot update
+            self.ani = animation.FuncAnimation(self.fig, self.draw_plot, interval=150, blit=False)
+            self.ani._stop()
+            
+            
+    def draw_plot(self,i):
+
+        # view settings
         self.ax.cla()
         self.ax.set_title(self.month_name)
         self.ax.set_xticks([0,1,2,3,4,5,6])
@@ -90,13 +81,14 @@ class Plot:
         self.ax.invert_yaxis()
         self.ax.view_init(50,103)
         self.ax.set_zlim((0,40))
-        for i in range(len(self.regular_punkts_quantity)):
-                self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], color='paleturquoise')
-                self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], self.regular_punkts_quantity[i], 0.3, 0.3,
-                             self.annual_punkts_quantity[i], color='orange', alpha = self.alpha[i],zsort='max')
+
+        # actualy draw a plot
+        for i,_ in enumerate(self.regular_punkts_quantity):
+            self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], color= 'red' if self.selected_punkt[i] else 'paleturquoise' )
+            self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], self.regular_punkts_quantity[i], 0.3, 0.3,
+                            self.annual_punkts_quantity[i], color= 'red' if self.selected_punkt[i] else 'orange', alpha = self.alpha[i], zsort='max')
 
     def update_plot(self):
-
         self.ani._step()
 
     def destroy(self):
