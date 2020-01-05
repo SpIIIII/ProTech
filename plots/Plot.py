@@ -39,6 +39,7 @@ class Plot:
             self.annual_punkts_quantity = np.append(self.annual_punkts_quantity, len(self.punkts.today_punkts(self.day_for_calculate,annual = True)))
             self.day_for_calculate+= dt.timedelta(1)
         self.alpha = [0 if i==0 else 1 for i in self.annual_punkts_quantity ]
+        
 
 
     def draw_plot_for_month(self,frame):
@@ -46,11 +47,16 @@ class Plot:
         # select style in which draw a plot
         with plt.style.context('seaborn-white'):
             
+            # init figure and axes
             self.fig = plt.figure()
             self.ax = plt.axes(projection='3d')
-            self.ax.set_title(self.month_name)
-
+            
             # view settings
+            self.ax.set_title(self.month_name)
+            self.ax.set_xticks([0,1,2,3,4,5,6])
+            self.ax.set_xticklabels(['пн','вт','ср','чт','пт','сб','вс'])
+            self.ax.set_yticklabels([' ','неделя 1','неделя 2','неделя 3','неделя 4','неделя 5','неделя 6'])
+            self.ax.mouse_init(rotate_btn=1, zoom_btn=3)
             self.ax.invert_yaxis()
             self.ax.view_init(50,103)
             self.ax.set_zlim((0,40))
@@ -67,14 +73,20 @@ class Plot:
             # post plot to tk.frame
             canvas = FigureCanvasTkAgg(self.fig, master=frame)
             canvas.get_tk_widget().pack()
+            self.ani = animation.FuncAnimation(self.fig, self.update_data, interval=150, blit=False)
+            self.ani._stop()
             self.ax.get_children()[-1].set_edgecolor('r')
-            return self.fig
             
-    def update(self):
+            
+    def update_data(self,i):
 
         # redraw to update plot when new data comes
         self.ax.cla()
         self.ax.set_title(self.month_name)
+        self.ax.set_xticks([0,1,2,3,4,5,6])
+        self.ax.set_xticklabels(['пн','вт','ср','чт','пт','сб','вс'])
+        self.ax.set_yticklabels([' ','неделя 1','неделя 2','неделя 3','неделя 4','неделя 5','неделя 6'])
+        self.ax.mouse_init(rotate_btn=1, zoom_btn=3)
         self.ax.invert_yaxis()
         self.ax.view_init(50,103)
         self.ax.set_zlim((0,40))
@@ -82,6 +94,10 @@ class Plot:
                 self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], color='paleturquoise')
                 self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], self.regular_punkts_quantity[i], 0.3, 0.3,
                              self.annual_punkts_quantity[i], color='orange', alpha = self.alpha[i],zsort='max')
+
+    def update_plot(self):
+
+        self.ani._step()
 
     def destroy(self):
         del(self)

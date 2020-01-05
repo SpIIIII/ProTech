@@ -28,8 +28,14 @@ class Analysis(tk.Toplevel):
     def init_analysis(self):
         
         # inject data that need to be plotted
-        def set_data(event):
+        def set_data():
             self.plot.set_data(bottom_frame,combox_punkts.get(), combox_month.get())
+
+        def draw_onece(event):
+            # run plot update
+            set_data()
+            self.plot.update_plot()
+      
             
         # add frames
         top_frame = ttk.Frame(self,height=50)
@@ -50,15 +56,15 @@ class Analysis(tk.Toplevel):
 
         # fill top_frame
         combox_month = ttk.Combobox(top_frame,values=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август',
-                                                         'Сентябрь','Октябрь','Ноябрь','Декабрь', 'Год'],justify='center')
+                                                         'Сентябрь','Октябрь','Ноябрь','Декабрь'],justify='center')
         combox_month.current(self.curent_date.month-1)
-        combox_month.bind("<<ComboboxSelected>>", set_data)
+        combox_month.bind("<<ComboboxSelected>>", draw_onece)
         combox_month.place(x=470,y=10)
 
         # fill punkts initialy
         combox_punkts = ttk.Combobox(top_frame, values=[i.name for i in self.punkts],justify='center',width = 15)
         combox_punkts.current(0)
-        combox_month.bind("<<ComboboxSelected>>", set_data)
+        combox_month.bind("<<ComboboxSelected>>", draw_onece)
         combox_punkts.place(x=340,y=10)
 
         # fill punkts depending of selected period
@@ -81,14 +87,10 @@ class Analysis(tk.Toplevel):
 
         # set data and plot it initialy
         self.plot.set_data(bottom_frame,combox_punkts.get(), combox_month.get())
-        self.fig = self.plot.draw_plot_for_month(bottom_frame)
+        self.plot.draw_plot_for_month(bottom_frame)
 
         # function to call plot's update
-        def draw_plot(i):
-            self.plot.update()
-
-        # run plot updates
-        animation.FuncAnimation(self.fig, draw_plot, interval=150, blit=False)._start()
+       
         
 
         self.grab_set()
