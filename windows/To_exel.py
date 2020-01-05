@@ -13,6 +13,7 @@ class To_Exel(tk.Toplevel):
     def __init__ (self, root, punkts):
         super().__init__ (root)
         self.punkts = punkts
+        self.bind('<Escape>', lambda e: self.destroy())
         self.init_choice()
 
     def caclulateExel(self,whatday,real_now):
@@ -115,13 +116,11 @@ class To_Exel(tk.Toplevel):
         #print(self.desktop+'/Оперативный %s %i.xls'%(self.combobox1.get(),self.now1.year))
         book.save(self.desktop+'/Оперативный %s %i.xls'%(self.combobox1.get(),self.now1.year))
                    
-        
     def caclulateExelFor(self,dayPunkt,yearPunkt):
 
         self.punktNumber=[i.name for i in self.punkts]
         self.textPunktNumber=''
         self.CreateExelFor(dayPunkt,yearPunkt)
-
 
     def CreateExelFor(self,nowWithMonth,realNow):
 
@@ -130,15 +129,15 @@ class To_Exel(tk.Toplevel):
         sheet=book.add_sheet('sheetname',cell_overwrite_ok=True)
 
         font1 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold on, italic off;\
-       align: wrap off, vert top, horiz left;')
+            align: wrap off, vert top, horiz left;')
         font2 = xlwt.easyxf('font: height 260,name Times_New_Roman,colour_index black, bold on, italic off;\
-       align: vertical center, horizontal center, wrap off;')
+            align: vertical center, horizontal center, wrap off;')
         font3 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold off, italic off;\
-     align: vertical top, horizontal center, wrap on;\
-    borders: left thin, right thin, top thin, bottom thin;')
+            align: vertical top, horizontal center, wrap on;\
+            borders: left thin, right thin, top thin, bottom thin;')
         font4 = xlwt.easyxf('font: height 220,name Times New Roman,colour_index black, bold off, italic off;\
-     align: vertical top, horizontal center, wrap on;\
-    borders: left thin, right thin, top thin, bottom thin;')
+            align: vertical top, horizontal center, wrap on;\
+            borders: left thin, right thin, top thin, bottom thin;')
         
         sheet.row(12).height_mismatch = True
         sheet.row(12).height = 1500
@@ -177,8 +176,6 @@ class To_Exel(tk.Toplevel):
             for y in range (14):
                 sheet.write(9+i,10+y,'',font3)
             while (10+w+self.startday) <= 23 and e in range(calendar.mdays[forNow.month]):
-                #print (9+i,10+self.startday+w,'in calendar',e,i)
-                
                 sheet.write(9+i,10+self.startday+w,dayvar,font4)
                 dayvar+=1
                 e+=1
@@ -280,7 +277,6 @@ class To_Exel(tk.Toplevel):
         sheet.set_print_scaling(100)
         book.save(self.desktop+'/Четырёхнедельный %s %i.xls'%(self.combobox1.get(),self.now1.year) ) 
 
-    
     def WhatDistant(self,targetText):
         return (len(targetText)//20+1)*300
 
@@ -290,11 +286,13 @@ class To_Exel(tk.Toplevel):
             self.entry_utv.delete(0, "end") # delete all the text in the entry
             self.entry_utv.insert(0, '') #Insert blank for user input
             self.entry_utv.configure(style="Black.TEntry")
+
     def on_entry_click1(self,event):
         if self.entry_set.get() == 'ШНС Шипин':
-            self.entry_set.delete(0, "end") # delete all the text in the entry
-            self.entry_set.insert(0, '') #Insert blank for user input
-            self.entry_set.configure(style="Black.TEntry")#entry.config(fg = 'black')
+            self.entry_set.delete(0, "end")                 # delete all the text in the entry
+            self.entry_set.insert(0, '')                    #Insert blank for user input
+            self.entry_set.configure(style="Black.TEntry")  #entry.config(fg = 'black')
+
     def on_entry_click2(self,event):
         #print(self.text2)
         if self.entry_do.get('1.0', tk.END) ==self.text1:
@@ -305,15 +303,16 @@ class To_Exel(tk.Toplevel):
             self.text2=self.entry_do.get('1.0', tk.END)
             self.entry_do.config(fg = 'black')#entry.config(fg = 'black')
             
-
     def on_focusout(self,event):
         if self.entry_utv.get() == '':
             self.entry_utv.insert(0, 'ШЧУ Шинкаренко')
             self.entry_utv.configure(style="Red.TEntry")
+
     def on_focusout1(self,event):
         if self.entry_set.get() == '':
             self.entry_set.insert(0, 'ШНС Шипин')
             self.entry_set.configure(style="Red.TEntry")
+
     def on_focusout2(self,event):
         #print(self.text2)
         if self.entry_do.get('1.0', tk.END) == self.text2:
@@ -321,7 +320,6 @@ class To_Exel(tk.Toplevel):
             #print('yes i work to')
             self.entry_do.insert(tk.INSERT, self.text1)
             self.entry_do.config(fg = 'gray')
-
 
     def init_choice(self):
         self.title("Вывести в Exel")

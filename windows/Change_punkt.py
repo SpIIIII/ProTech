@@ -7,6 +7,7 @@ class Change(tk.Toplevel):
         self.main=main
         self.chengebl_punkt = onePunkt[0]
         self.punkts = punkts
+        self.bind('<Escape>', lambda e: self.destroy())
         self.init_change(onePunkt)
 
     def init_change(self,onePunkt):
