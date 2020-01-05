@@ -60,6 +60,7 @@ class Punkt:
             return False
 
         if annual == self.is_annual():
+            
             if now_weekday !=6 and now_weekday !=5 :
                 if self.period == ' ежедневно':
                     return(True)
@@ -90,6 +91,7 @@ class Punkt:
                 
                 elif str(self.period) == str(' раз 12 месяцев'):
                     if (self.shift_week+now_week+(4*(13-associationforMonth[self.month])))%52==0:
+                        print(self.name)
                         if (47+now_week+associationforMonth[self.month]+self.shift_week)%52==0:
                             if association[self.day_of_week]==now_weekday:
                                 return(True)
@@ -103,7 +105,7 @@ class Punkt:
     def update(self,*args):
         self.db.update_data(*args)
 
-    def __repr__(self):
+    def __str__(self):
         return f"===============\nпункт: {self.name}\nописание: {self.description}\
             \nпериодичность: {self.period}\nдень: {self.day_of_week}\nМесяц: {self.month}\
             \nинструкция: {self.instruction}\nприказ: {self.order}\nответственный: {self.responsible}\
@@ -152,7 +154,7 @@ class Punkts:
             self.fill_punkts()
             return self
 
-        def month_punkts(self,date:datetime=datetime.datetime.now(), name_only=True, without_holidays=True, annual=None)->list:
+        def month_punkts(self,date:datetime, name_only=True, without_holidays=True, annual=None)->list:
             month = date.month
             day_for_calc = date.replace(day = 1)
             month_punkts=list()
