@@ -13,7 +13,7 @@ class New_Punkt(tk.Toplevel):
 
     def on_entry_click(self,event):
         """function that gets called whenever entry is clicked"""
-        if self.entry_de1.get() == 'п 1.5  ':
+        if self.entry_de1.get() == 'п 1.5 ':
             self.entry_de1.delete(0, "end") # delete all the text in the entry
             self.entry_de1.insert(0, '') #Insert blank for user input
             self.entry_de1.configure(style="Black.TEntry")
@@ -104,7 +104,7 @@ class New_Punkt(tk.Toplevel):
         label_desctiption.grid(row=9,column=1,sticky = tk.W,  pady=3)#place(x=20,y=260)
 
         self.entry_de1=ttk.Entry(self,textvariable =self.whatnumber)
-        self.entry_de1.insert(0,'п 1.5  ')
+        self.entry_de1.insert(0,'п 1.5 ')
         self.entry_de1.bind('<FocusIn>', self.on_entry_click)
         self.entry_de1.bind('<FocusOut>', self.on_focusout)
         self.entry_de1.configure(style="Red.TEntry")
@@ -192,9 +192,9 @@ class New_Punkt(tk.Toplevel):
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
         button_cancel.place(x=100,y =377)
 
-        button_del= ttk.Button(self, text='Удалить', command=self.main.refresh_tree_view)
+        button_del= ttk.Button(self, text='Удалить', command= lambda:(self.punkts.delete_punkt_by_name(self.entry_de1.get()+' '),self.main.refresh_tree_view()))
         button_del.place(x=270,y =377)
-        button_del.bind('<Button-1>', lambda event2: self.punkts.delete_punkts(self.entry_de1.get()))
+        # button_del.bind('<Button-1>', lambda event2: self.punkts.delete_punkt_by_name(self.entry_de1.get()+' '))
 
 
 

@@ -141,22 +141,21 @@ class Punkts:
         def __iter__(self):
             return(PunktsIterator(self))
 
-        def delete_punkts_by_name(self,punkts:list(str)):
-            [self.delete_punkt_by_name(name) for name in punkts]
+        def insert_punkt (self, name, description, period, day_of_week, month, instruction, order, responsible, equipment, shift)-> None:
+            self.db.insert_data(name, description, period, day_of_week,
+                                month, instruction, order, responsible,
+                                equipment, shift)
 
-        def delete_punkt_by_name(self, punkt):
-            [punkt.GUI_delete for punkt in self.all_punkts if punkt.name == punkt]
-
-        def fill_punkts(self):
+        def fill_punkts(self)-> None:
             self.all_punkts = list()
             for punkt in self.db.c.execute("SELECT id, * FROM weekSchedule"):
                 self.all_punkts.append(Punkt(punkt,db=self.db))
 
-        def get_punkt(self,name:str)->Punkt:
-            return [punkt for punkt in self.all_punkts if punkt.name == name][0]
-
         def get_punkts(self,*name)->list:
             return [punkt for punkt in self.all_punkts if punkt.name in name]
+
+        def get_punkt(self,name:str)->Punkt:
+            return [punkt for punkt in self.all_punkts if punkt.name == name][0]
 
         def re_read(self):
             self.fill_punkts()
@@ -182,10 +181,13 @@ class Punkts:
             else:
                 return [punkt for punkt in self.all_punkts if punkt.is_today(date, annual)]
 
-        def insert_punkt (self, name, description, period, day_of_week, month, instruction, order, responsible, equipment, shift):
-            self.db.insert_data(name, description, period, day_of_week,
-                                month, instruction, order, responsible,
-                                equipment, shift)
+        def delete_punkts_by_name(self,punkts:list)-> None:
+            [self.delete_punkt_by_name(name) for name in punkts]
+
+        def delete_punkt_by_name(self, punkt_to_del)-> None:
+            [punkt.GUI_delete() for punkt in self.all_punkts if punkt.name == punkt_to_del]
+
+        
                                 
     instance = None
     def __new__(cls,db):
