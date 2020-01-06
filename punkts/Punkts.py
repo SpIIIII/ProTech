@@ -60,7 +60,6 @@ class Punkt:
             return False
 
         if annual == self.is_annual():
-            
             if now_weekday !=6 and now_weekday !=5 :
                 if self.period == ' ежедневно':
                     return(True)
@@ -91,7 +90,6 @@ class Punkt:
                 
                 elif str(self.period) == str(' раз 12 месяцев'):
                     if (self.shift_week+now_week+(4*(13-associationforMonth[self.month])))%52==0:
-                        print(self.name)
                         if (47+now_week+associationforMonth[self.month]+self.shift_week)%52==0:
                             if association[self.day_of_week]==now_weekday:
                                 return(True)
