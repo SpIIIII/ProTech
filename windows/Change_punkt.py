@@ -121,3 +121,7 @@ class Change(tk.Toplevel):
                                                                         self.chengebl_punkt.name,
                                                                         self.entry_shift.get())
                                                                         )
+                                                                        
+        self.wait_visibility()
+        self.grab_set()
+        self.focus_set()
