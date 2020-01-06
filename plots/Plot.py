@@ -6,6 +6,7 @@ import numpy as np
 import calendar
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import LightSource
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
     
@@ -74,18 +75,19 @@ class Plot:
         # view settings
         self.ax.cla()
         self.ax.set_title(self.month_name)
-        self.ax.set_xticks([0,1,2,3,4,5,6])
-        self.ax.set_xticklabels(['пн','вт','ср','чт','пт','сб','вс'])
-        self.ax.set_yticklabels([' ','неделя 1','неделя 2','неделя 3','неделя 4','неделя 5','неделя 6'])
+        self.ax.set_yticks([0,1,2,3,4,5,6])
+        self.ax.set_yticklabels(['пн','вт','ср','чт','пт','сб','вс'])
+        self.ax.set_xticklabels([' ','неделя 1','неделя 2','неделя 3','неделя 4','неделя 5','неделя 6'])
         self.ax.mouse_init(rotate_btn=1, zoom_btn=3)
-        self.ax.invert_yaxis()
-        self.ax.view_init(50,103)
+  
+        self.ax.view_init(50,13)
         self.ax.set_zlim((0,40))
 
         # actualy draw a plot
         for i,_ in enumerate(self.regular_punkts_quantity):
-            self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], color= 'red' if self.selected_punkt[i] else 'paleturquoise' )
-            self.ax.bar3d(self.days_of_week[i], self.week_of_month[i], self.regular_punkts_quantity[i], 0.3, 0.3,
+            self.ax.bar3d(self.week_of_month[i], self.days_of_week[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], 
+                color= 'red' if self.selected_punkt[i] else 'paleturquoise')
+            self.ax.bar3d(self.week_of_month[i], self.days_of_week[i], self.regular_punkts_quantity[i], 0.3, 0.3,
                             self.annual_punkts_quantity[i], color= 'red' if self.selected_punkt[i] else 'orange', alpha = self.alpha[i], zsort='max')
 
     def update_plot(self):

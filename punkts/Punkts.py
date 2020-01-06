@@ -1,6 +1,6 @@
 import datetime
 import calendar
-
+import tkinter as tk
 
 class Punkt:
     def __init__ (self,*args,db=None):
@@ -100,6 +100,13 @@ class Punkt:
     def delete(self):
         self.db.delet_data(self.name)
 
+    def GUI_delete(self):
+        question = tk.messagebox.askquestion('Удаление',f'Вы собираетесь удалить пункт {self.name}.\nУдалить пункт?')
+        if question == 'yes':
+            self.delete()
+            tk.messagebox.showinfo('Готово',f'Пункт {self.name} удален')
+
+
     def update(self,*args):
         self.db.update_data(*args)
 
@@ -134,8 +141,11 @@ class Punkts:
         def __iter__(self):
             return(PunktsIterator(self))
 
-        def delete_punkts(self,punkts):
-            [punkt.delete for punkt in self.all_punkts in punkt.name in punkts]
+        def delete_punkts_by_name(self,punkts:list(str)):
+            [self.delete_punkt_by_name(name) for name in punkts]
+
+        def delete_punkt_by_name(self, punkt):
+            [punkt.GUI_delete for punkt in self.all_punkts if punkt.name == punkt]
 
         def fill_punkts(self):
             self.all_punkts = list()

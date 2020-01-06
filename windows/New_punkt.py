@@ -3,10 +3,10 @@ from tkinter import ttk
 
 class New_Punkt(tk.Toplevel):
 
-    def __init__ (self, punkts, main, root):
-        super().__init__ (root)
-        self.punkts=punkts
-        self.main=main
+    def __init__ (self, main):
+        self.main = main
+        super().__init__ (self.main)
+        self.punkts=self.main.punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.init_new_punkt()
 
@@ -194,7 +194,7 @@ class New_Punkt(tk.Toplevel):
 
         button_del= ttk.Button(self, text='Удалить', command=self.main.refresh_tree_view)
         button_del.place(x=270,y =377)
-        button_del.bind('<Button-1>', lambda event2: self.punkts.delete_punkts(self.entry_de1.get()+' '))
+        button_del.bind('<Button-1>', lambda event2: self.punkts.delete_punkts(self.entry_de1.get()))
 
 
 

@@ -2,11 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 
 class Change(tk.Toplevel):
-    def __init__ (self, onePunkt, punkts, main, root):
-        super().__init__ (root)
+    def __init__ (self, main, onePunkt):
+        super().__init__ (main)
         self.main=main
-        self.chengebl_punkt = onePunkt[0]
-        self.punkts = punkts
+        self.chengebl_punkt = onePunkt
+        self.punkts = self.main.punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.init_change(onePunkt)
 
