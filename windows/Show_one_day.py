@@ -5,9 +5,10 @@ import textwrap
 
 class ShowOneDay(tk.Toplevel):
     
-    def __init__ (self,root, punkts):
-        super().__init__ (root)
-        self.punkts = punkts
+    def __init__ (self,main):
+        self.main = main
+        super().__init__ (self.main)
+        self.punkts = self.main.punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.show_onedaypunkt()
 

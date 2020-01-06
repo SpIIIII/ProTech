@@ -10,9 +10,10 @@ from tkinter import ttk
 IS_WINDOWS = True if platform.system() == 'Windows' else False
 
 class To_Exel(tk.Toplevel):
-    def __init__ (self, root, punkts):
-        super().__init__ (root)
-        self.punkts = punkts
+    def __init__ (self, main):
+        self.main = main
+        super().__init__ (self.main)
+        self.punkts = self.main.punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.init_choice()
 

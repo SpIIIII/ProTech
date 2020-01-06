@@ -1,6 +1,6 @@
 import datetime
 import calendar
-
+import tkinter as tk
 
 class Punkt:
     def __init__ (self,*args,db=None):
@@ -100,6 +100,13 @@ class Punkt:
     def delete(self):
         self.db.delet_data(self.name)
 
+    def GUI_delete(self):
+        question = tk.messagebox.askquestion('Удаление',f'Вы собираетесь удалить пункт {self.name}.\nУдалить пункт?')
+        if question == 'yes':
+            self.delete()
+            tk.messagebox.showinfo('Готово',f'Пункт {self.name} удален')
+
+
     def update(self,*args):
         self.db.update_data(*args)
 
@@ -113,7 +120,7 @@ class Punkt:
 
 
 class PunktsIterator:
-    def __init__(self,punkts):
+    def __init__(self,punkts)->None:
         self._punkts = punkts
         self.index = 0
     def __next__(self):
@@ -134,19 +141,25 @@ class Punkts:
         def __iter__(self):
             return(PunktsIterator(self))
 
-        def delete_punkts(self,punkts):
-            [punkt.delete for punkt in self.all_punkts in punkt.name in punkts]
+        def insert_punkt (self, name, description, period, day_of_week, month, instruction, order, responsible, equipment, shift)-> None:
+            self.db.insert_data(name, description, period, day_of_week,
+                                month, instruction, order, responsible,
+                                equipment, shift)
 
-        def fill_punkts(self):
-            self.all_punkts = list()
+        def fill_punkts(self)-> None:
+            self.__all_punkts = list()
             for punkt in self.db.c.execute("SELECT id, * FROM weekSchedule"):
-                self.all_punkts.append(Punkt(punkt,db=self.db))
+                self.__all_punkts.append(Punkt(punkt,db=self.db))
 
-        def get_punkt(self,name:str)->Punkt:
-            return [punkt for punkt in self.all_punkts if punkt.name == name][0]
+        @property
+        def all_punkts(self)-> list:
+            return self.__all_punkts
 
         def get_punkts(self,*name)->list:
-            return [punkt for punkt in self.all_punkts if punkt.name in name]
+            return [punkt for punkt in self.__all_punkts if punkt.name in name]
+
+        def get_punkt(self,name:str)->Punkt:
+            return [punkt for punkt in self.__all_punkts if punkt.name == name][0]
 
         def re_read(self):
             self.fill_punkts()
@@ -168,14 +181,17 @@ class Punkts:
 
         def today_punkts (self, date:datetime=datetime.datetime.now(), name_only:bool=True, annual=None)->list:
             if name_only:
-                return [punkt.name for punkt in self.all_punkts if punkt.is_today(date, annual)]
+                return [punkt.name for punkt in self.__all_punkts if punkt.is_today(date, annual)]
             else:
-                return [punkt for punkt in self.all_punkts if punkt.is_today(date, annual)]
+                return [punkt for punkt in self.__all_punkts if punkt.is_today(date, annual)]
 
-        def insert_punkt (self, name, description, period, day_of_week, month, instruction, order, responsible, equipment, shift):
-            self.db.insert_data(name, description, period, day_of_week,
-                                month, instruction, order, responsible,
-                                equipment, shift)
+        def delete_punkts_by_name(self,punkts:list)-> None:
+            [self.delete_punkt_by_name(name) for name in punkts]
+
+        def delete_punkt_by_name(self, punkt_to_del)-> None:
+            [punkt.GUI_delete() for punkt in self.__all_punkts if punkt.name == punkt_to_del]
+
+        
                                 
     instance = None
     def __new__(cls,db):
