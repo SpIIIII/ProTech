@@ -192,13 +192,13 @@ class New_Punkt(tk.Toplevel):
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
         button_cancel.place(x=100,y =377)
 
-        button_del= ttk.Button(self, text='Удалить', command= lambda:(self.punkts.delete_punkt_by_name(self.entry_de1.get()+' '),self.main.refresh_tree_view()))
+        button_del= ttk.Button(self, text='Удалить', command= lambda:(self.punkts.delete_punkt_by_name(self.entry_de1.get()+' '),self.main.refresh_tree_view(),self.punkts.re_read()))
         button_del.place(x=270,y =377)
         # button_del.bind('<Button-1>', lambda event2: self.punkts.delete_punkt_by_name(self.entry_de1.get()+' '))
 
 
 
-        button_add= ttk.Button(self,text = "add",command=self.main.refresh_tree_view)
+        button_add= ttk.Button(self,text = "add",command= lambda :(self.main.refresh_tree_view(),self.punkts.re_read()))
         button_add.place(x=13,y =377)
         button_add.bind('<Button-1>', lambda event1: self.punkts.insert_punkt(self.entry_de1.get()+' ',
                                                                         self.entry_de2.get('1.0', tk.END),
@@ -210,6 +210,7 @@ class New_Punkt(tk.Toplevel):
                                                                         self.entryMaker.get(),
                                                                         self.entryOborud.get(),
                                                                         0))
+
         self.grab_set()
         self.focus_set()
   
