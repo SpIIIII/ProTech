@@ -10,7 +10,7 @@ class Analysis(tk.Toplevel):
         self.main = main
         super().__init__(self.main)
         self.title("Анализ")
-        self.geometry("640x530")
+        self.geometry("640x550")
         self.resizable(False,False)
         self.minsize(600,350)
         self.bind('<Escape>', lambda e: self.exit())
@@ -36,7 +36,7 @@ class Analysis(tk.Toplevel):
     def init_analysis(self):
         
         ## add frames
-        top_frame = ttk.Frame(self, height=50)
+        top_frame = ttk.Frame(self, height=68)
         top_frame.pack(side=tk.TOP,fill=tk.BOTH, expand=True)
 
         bottom_frame = ttk.Frame(self)
@@ -54,20 +54,20 @@ class Analysis(tk.Toplevel):
 
         ## fill top_frame
         #create label
-        label = ttk.Label(top_frame, text = 'Выбранный пункт будет отмечен \nкрасным на графике')
-        label.place(x=150, y=10)
+        label = ttk.Label(top_frame, text = 'Выбранный пункт будет отмечен красным на графике')
+        label.place(x=55, y=5)
 
         # create combox_month
         self.combox_month = ttk.Combobox(top_frame,values=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август',
                                                          'Сентябрь','Октябрь','Ноябрь','Декабрь'],justify='center')
         self.combox_month.current(self.curent_date.month-1)
         self.combox_month.bind("<<ComboboxSelected>>", self.update_plot)
-        self.combox_month.place(x=470,y=10)
+        self.combox_month.place(x=470,y=25)
 
         # create combox_punkts
         self.combox_punkts = ttk.Combobox(top_frame, justify='center',width = 15)
         self.combox_punkts.bind("<<ComboboxSelected>>", lambda x: self.update_plot(None))
-        self.combox_punkts.place(x=340,y=30)
+        self.combox_punkts.place(x=340,y=45)
         def create_combox_punkts(period):
             if period == ' Все':
                 punkts_to_fill = [i.name for i in self.punkts]
@@ -84,8 +84,12 @@ class Analysis(tk.Toplevel):
         periods.append(' Все')
         self.combox_periods = ttk.Combobox(top_frame,values=periods,justify='center')
         self.combox_periods.current(len(periods)-1)
-        self.combox_periods.place(x=470,y=30)
+        self.combox_periods.place(x=470,y=45)
         self.combox_periods.bind("<<ComboboxSelected>>", lambda x: (create_combox_punkts(self.combox_periods.get()),self.update_plot(None)))
+
+        # create buttons
+        self.show_punkt_botton = ttk.Button(top_frame, text = 'Просмотреть пункт', command = self.open_show_punkt)
+        self.show_punkt_botton.place(x=115, y=41.5)
 
         # set data and plot it initialy
         self.plot.set_data(self.combox_punkts.get(), self.combox_month.get())
@@ -93,3 +97,6 @@ class Analysis(tk.Toplevel):
 
         self.grab_set()
         self.focus_set()
+
+    def open_show_punkt(self):
+        self.main.Show_punkt(self.main,self.punkts.get_punkt(self.combox_punkts.get()))

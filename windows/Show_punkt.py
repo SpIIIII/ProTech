@@ -40,6 +40,10 @@ class Show_punkt(tk.Toplevel):
 
         self.label_day = tk.Label(self.bottom_frame, text = f'День выполнения - {self.punkt.day_of_week}', bg = 'white')
         self.label_day.place(x=10, y=10)
+        
+        if self.punkt.period == ' раз 12 месяцев' or self.punkt.period == ' раз в 6 месяцев':
+            self.label_day = tk.Label(self.bottom_frame, text = f'Месяц - {self.punkt.month}', bg = 'white')
+            self.label_day.place(x=170, y=10)
 
         self.label_period = tk.Label(self.bottom_frame, text = f'Периодичность - {self.punkt.period}', bg = 'white')
         self.label_period.place(x=10, y=30)

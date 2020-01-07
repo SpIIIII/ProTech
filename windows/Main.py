@@ -15,6 +15,7 @@ class Main(tk.Frame):
         self.punkts = punkts
         self.change_punkt = Change_punkt.Change
         root.protocol("WM_DELETE_WINDOW", root.quit)
+        self.Show_punkt = Show_punkt.Show_punkt
         self.init_main()
         
         
@@ -87,7 +88,7 @@ class Main(tk.Frame):
         item = self.tree.selection()[0]
         name = self.tree.item(item,'values')[0]
         punkt = self.punkts.get_punkt(name)
-        self.open_shpw_punkt(punkt)
+        self.open_show_punkt(punkt)
 
     def drop_popup_menu(self, event):
         """action in event of button 3 on tree view"""
@@ -122,8 +123,8 @@ class Main(tk.Frame):
     def open_add_new_punkt(self):
         New_punkt.New_Punkt(self)
 
-    def open_shpw_punkt(self,punkt):
-        Show_punkt.Show_punkt(self, punkt)
+    def open_show_punkt(self,punkt):
+        self.Show_punkt(self, punkt)
 
     def open_To_Exel(self):
         To_exel.To_Exel(self)

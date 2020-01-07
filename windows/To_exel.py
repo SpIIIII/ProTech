@@ -344,7 +344,7 @@ class To_Exel(tk.Toplevel):
         self.textForDo= tk.StringVar()
 
         self.now1=datetime.datetime.now()
-        association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
+        month_association={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
         
         
@@ -356,11 +356,11 @@ class To_Exel(tk.Toplevel):
 
         self.buttonOper=ttk.Button(self,text="Оперативный")
         self.buttonOper.place(x=20,y=170)
-        self.buttonOper.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(self.now1.year,association1[self.combobox1.get()],1), self.now1))
+        self.buttonOper.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(self.now1.year,month_association[self.combobox1.get()],1), self.now1))
      
         self.buttonFor=ttk.Button(self,text="Четырёхнедельный")
         self.buttonFor.place(x=140,y=170)
-        self.buttonFor.bind('<Button-1>', lambda event: self.caclulateExelFor(datetime.datetime(self.now1.year,association1[self.combobox1.get()],1),self.now1))
+        self.buttonFor.bind('<Button-1>', lambda event: self.caclulateExelFor(datetime.datetime(self.now1.year,month_association[self.combobox1.get()],1),self.now1))
 
         label_utv=tk.Label(self, text="Утвердил")
         label_utv.place(x=20,y=20)
