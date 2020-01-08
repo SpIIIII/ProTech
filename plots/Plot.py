@@ -10,10 +10,10 @@ from matplotlib.colors import LightSource
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
     
-
 class Plot:
     def __init__ (self, punkts):
         self.punkts = punkts
+        self.is_init = False
         self.month_association={'Январь':1,'Февраль':2,'Март':3,'Апрель':4,'Май':5,'Июнь':6,'Июль':7,'Август':8,
                                                         'Сентябрь':9,'Октябрь':10,'Ноябрь':11,'Декабрь':12}
 
@@ -46,8 +46,8 @@ class Plot:
         
 
 
-    def draw_plot_for_month(self,frame):
-
+    def init_plot(self,frame):
+        
         # select style in which draw a plot
         with plt.style.context('seaborn-white'):
             
@@ -56,8 +56,8 @@ class Plot:
             self.ax = plt.axes(projection='3d')
             
             # call draw plot func
-            self.draw_plot(1)
-                       
+            self.draw_plot(0)
+                        
             # set intendents from edges
             self.fig.subplots_adjust(left=0.00, right=1, bottom=0.00, top=1)
 
@@ -68,10 +68,10 @@ class Plot:
             # setup plot update
             self.ani = animation.FuncAnimation(self.fig, self.draw_plot, interval=150, blit=False)
             self.ani._stop()
+        
             
             
     def draw_plot(self,i):
-
         # view settings
         self.ax.cla()
         self.ax.set_title(self.month_name)
@@ -79,7 +79,7 @@ class Plot:
         self.ax.set_yticklabels(['пн','вт','ср','чт','пт','сб','вс'])
         self.ax.set_xticklabels([' ','неделя 1','неделя 2','неделя 3','неделя 4','неделя 5','неделя 6'])
         self.ax.mouse_init(rotate_btn=1, zoom_btn=3)
-  
+
         self.ax.view_init(50,13)
         self.ax.set_zlim((0,40))
 

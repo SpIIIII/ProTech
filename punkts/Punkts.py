@@ -112,6 +112,9 @@ class Punkts:
         def __iter__(self):
             return(PunktsIterator(self))
 
+        def __len__(self):
+            return len(self.__all_punkts)
+
         def insert_punkt (self, name, description, period, day_of_week, month, instruction, order, responsible, equipment, shift)-> None:
             self.db.insert_data(name, description, period, day_of_week,
                                 month, instruction, order, responsible,
