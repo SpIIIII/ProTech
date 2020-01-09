@@ -4,22 +4,27 @@ import re
 
 class Versions:
     def __init__ (self):
-        self.ulr_of_remote_version = "http://68.183.208.74"
-        self.alternative_ulr_of_remote_version = "http://68.183.208.74/file_store/ProTech"
+        self.urls_of_remote_version = ["http://68.183.208.74/", "http://68.183.208.74/file_storage/ProTech/"]
         with open('.version', 'r') as f:
             self.local_version_txt = f.read()
         self.local_version = self.version_to_int(self.local_version_txt)
+        self.link_to_download = str()
     
     def get_remote_version_txt(self) -> str:
         """   Get version of program from remote server 68.183.208.74 """
-        try :
-            responce = requests.get(self.ulr_of_remote_version, timeout=1)
-            pattern = r'<h2>\s?(.+)\s?</h2>'
-            remote_version_txt = re.findall(pattern,responce.content.decode())[0]
-            return remote_version_txt 
+        try:
+            for i in self.urls_of_remote_version:
+                responce = requests.get(i, timeout=1)
+                if responce.status_code == 200:
+                    remote_version_txt = self.find_version(responce)
+                    return remote_version_txt
         except: 
             tkinter.messagebox.showinfo('Connection lost','Не возможно устанвоить соединение с сервером.\n Проверьте наличие подключения \
                                         и повторите попытку')
+
+    def find_version(self, responce):
+        pattern = r'<h2>\s?(.+)\s?</h2>' 
+        return re.findall(pattern,responce.content.decode())[0]
 
     @property
     def remote_version(self):
