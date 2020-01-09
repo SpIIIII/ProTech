@@ -17,7 +17,6 @@ class Plot:
         self.month_association={'Январь':1,'Февраль':2,'Март':3,'Апрель':4,'Май':5,'Июнь':6,'Июль':7,'Август':8,
                                                         'Сентябрь':9,'Октябрь':10,'Ноябрь':11,'Декабрь':12}
 
-    
     def set_data (self, punkt_name, month_name = 'Январь'):
 
         self.month_name = month_name

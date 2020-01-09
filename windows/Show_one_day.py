@@ -4,12 +4,11 @@ import textwrap
 
 
 class ShowOneDay(tk.Toplevel):
-    
     def __init__ (self,main):
         self.main = main
         super().__init__ (self.main)
         self.punkts = self.main.punkts
-        self.bind('<Escape>', lambda e: self.destroy())
+        self.bind('<Escape>', lambda e:self.destroy())
         self.show_onedaypunkt()
 
     def myWrap(self,string, lenght=8):
@@ -19,24 +18,23 @@ class ShowOneDay(tk.Toplevel):
         self.title("Вывести в Exel")
         self.geometry("500x600")
 
-        self.style=ttk.Style(self)
-        self.style.configure('mystyle.Treeview',rowheight=110)
+        self.style = ttk.Style(self)
+        self.style.configure('mystyle.Treeview', rowheight=110)
         
-        self.sctribeTree=ttk.Treeview(self,columns=('id','description'),height=40,show='headings',style="mystyle.Treeview")
+        self.sctribeTree = ttk.Treeview(self, columns=('id','description'),height=40,show='headings',style="mystyle.Treeview")
        
-        self.sctribeTree.column('id',width=20,anchor=tk.N)
-        self.sctribeTree.column('description',width=380,anchor=tk.N)
-        self.sctribeTree.heading('id',text='пункт')
-        self.sctribeTree.heading('description',text='описание')
-        self.sctribeTree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
+        self.sctribeTree.column('id', width=20, anchor=tk.N)
+        self.sctribeTree.column('description', width=380, anchor=tk.N)
+        self.sctribeTree.heading('id', text='пункт')
+        self.sctribeTree.heading('description', text='описание')
+        self.sctribeTree.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
 
-        self.scrollbar = ttk.Scrollbar(self,orient='vertical',command=self.sctribeTree.yview)
-        self.scrollbar.pack( side = tk.RIGHT, fill = tk.Y )
+        self.scrollbar = ttk.Scrollbar(self, orient='vertical', command=self.sctribeTree.yview)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y )
          
-        
         self.sctribeTree.configure(yscrollcommand=self.scrollbar.set)
    
-        for x in self.punkts.today_punkts(name_only = False):
+        for x in self.punkts.today_punkts(name_only=False):
             self.sctribeTree.insert("", "end", values=(x.name, '\n'.join(textwrap.wrap(x.description,35))))
             
         self.wait_visibility()

@@ -37,7 +37,6 @@ class Analysis(tk.Toplevel):
             tk.messagebox.showerror('Пусто',"Похоже пока нету ни одного пункта.\n Пожалуйста сначала добавьте пункты для выполнения")
             self.destroy()
         else:
-        
             ## add frames
             top_frame = ttk.Frame(self, height=68)
             top_frame.pack(side=tk.TOP,fill=tk.BOTH, expand=True)
@@ -87,7 +86,7 @@ class Analysis(tk.Toplevel):
             periods.append(' Все')
             self.combox_periods = ttk.Combobox(top_frame,values=periods,justify='center')
             self.combox_periods.current(len(periods)-1)
-            self.combox_periods.place(x=470,y=45)
+            self.combox_periods.place(x=470, y=45)
             self.combox_periods.bind("<<ComboboxSelected>>", lambda x: (create_combox_punkts(self.combox_periods.get()),self.update_plot(None)))
 
             # create buttons

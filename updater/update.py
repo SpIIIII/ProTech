@@ -19,8 +19,6 @@ class Update:
         else:
             self.desktop_path = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop/')
         
-
-
     def start(self):
         if self.versions.local_version < self.versions.remote_version:
             if self.confirm_update():
@@ -31,8 +29,8 @@ class Update:
             tk.messagebox.showinfo('Up to date',f'Текущая версия ({self.versions.local_version_txt}) обновлена')
 
     def confirm_update(self):
-            MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.versions.local_version_txt} версия для обновления - {self.versions.remote_version}.\n\
-                                                    Обновить?')
+            MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.versions.local_version_txt} \
+                                                версия для обновления - {self.versions.remote_version}.\nОбновить?')
             if MsgBox == 'yes':
                 tk.messagebox.showinfo('Обновление','Дождитесь пока будет скачана новая версия.\n После скачивания программа будет закрыта, \
                                         когда запуститься процесс установки следуйте инструкциям')
@@ -40,7 +38,6 @@ class Update:
             else:
                 return False
                
-
     def download (self):
         response = requests.get(self.url_of_sutup)
         self.folder_with_installer = self.temp_folder+'/protech'

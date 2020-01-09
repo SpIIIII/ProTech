@@ -20,16 +20,11 @@ class Main(tk.Frame):
         
         
     def init_main(self):
-
         self.now1 = datetime.datetime.now()
-        
-        '''
-        association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
-                                                        ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
-        '''  
+         
         # Draw Frames    
-        main_frame = tk.Frame(bd = 2)
-        main_frame.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=True)
+        main_frame = tk.Frame(bd=2)
+        main_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         # Draw MenuBar
         menubar = tk.Menu()
@@ -50,17 +45,17 @@ class Main(tk.Frame):
         self.root.config(menu=menubar)
 
         # Draw Labels
-        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.punkts.today_punkts(name_only = True)),bd=1,relief=tk.SUNKEN,anchor=tk.W)
-        label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
+        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.punkts.today_punkts(name_only=True)), bd=1, relief=tk.SUNKEN, anchor=tk.W)
+        label_on_root.pack(side=tk.BOTTOM, fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
         
         # Draw TreeView      
-        self.tree=ttk.Treeview(main_frame, columns =('ID','description','day','month'),height=15,show='headings')
+        self.tree=ttk.Treeview(main_frame, columns =('ID', 'description', 'day', 'month'), height=15, show='headings')
        
-        self.tree.column('ID', width=80,anchor=tk.CENTER)
-        self.tree.column('description', width=350,anchor=tk.E)
-        self.tree.column('day', width=100,anchor=tk.CENTER)
-        self.tree.column('month', width=50,anchor=tk.CENTER)
+        self.tree.column('ID', width=80, anchor=tk.CENTER)
+        self.tree.column('description', width=350, anchor=tk.E)
+        self.tree.column('day', width=100, anchor=tk.CENTER)
+        self.tree.column('month', width=50, anchor=tk.CENTER)
         
         self.tree.heading('ID', text='номер')
         self.tree.heading('description', text='краткое описание')
@@ -68,7 +63,7 @@ class Main(tk.Frame):
         self.tree.heading('month', text='день')
         self.tree.bind('<Button-3>',self.drop_popup_menu)
         self.tree.bind("<Double-1>", self.show_punkt)
-        self.tree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
+        self.tree.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
         self.fill_tree_view()
         
         # Create a popup menu
