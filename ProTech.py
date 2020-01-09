@@ -4,9 +4,8 @@ from plots import Plot
 from tkinter import ttk
 from windows import Main
 from punkts import Punkts
-from updater import update
+from updater import Updater
 from version import Version
-from tkinter import messagebox
 from datetime import timedelta
 
    
@@ -20,7 +19,7 @@ if __name__ ==  "__main__":
     punkts = Punkts.Punkts(db)
     plot = Plot.Plot(punkts)
     version = Version.Versions()
-    updater = update.Update(version)
+    updater = Updater.Updater(version)
 
     app = Main.Main(root, punkts, version, updater, plot)
     app.pack()

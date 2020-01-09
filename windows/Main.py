@@ -5,7 +5,6 @@ from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis, Show_pun
 
 
 class Main(tk.Frame):
-
     def __init__ (self, root, punkts, veison, updater, plot):
         super().__init__(root)
         self.root = root
@@ -21,7 +20,7 @@ class Main(tk.Frame):
         
     def init_main(self):
         self.now1 = datetime.datetime.now()
-         
+
         # Draw Frames    
         main_frame = tk.Frame(bd=2)
         main_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
@@ -38,7 +37,7 @@ class Main(tk.Frame):
         filemenu.add_command(label="Выход", command=self.root.quit)
 
         programmenu = tk.Menu(menubar, tearoff=0)
-        programmenu.add_command(label='Обновить программу', command=self.updater.start)
+        programmenu.add_command(label='Обновить программу', command=self.update)
         
         menubar.add_cascade(label="Файл", menu=filemenu)
         menubar.add_cascade(label="Программа", menu=programmenu)
@@ -75,6 +74,11 @@ class Main(tk.Frame):
 
         self.tree_item = ''
 
+        try:
+            self.init_update_check()
+        except:
+            pass
+
     def show_punkt(self, event):
         """ action when doubleclick the treeview"""
         iid = self.tree.identify_row(event.y)
@@ -108,6 +112,30 @@ class Main(tk.Frame):
         for i in self.tree.get_children():
             self.tree.delete(i)
         self.fill_tree_view()
+
+    def update(self):
+        if self.updater.need_update():
+            if self.confirm_update():
+                self.updater.start()
+        else:
+            tk.messagebox.showinfo('Up to date',f'Текущая версия ({self.version.local_version_txt}) обновлена')
+
+    def init_update_check(self):
+        if self.updater.need_update():
+            ask = tk.messagebox.askquestion('Доступно обновление', f'Текущая версия - {self.version.local_version_txt}. \
+                                            \nДоступно обновление до версии {self.version.remote_version_txt}\nОбновить?')
+            if ask == 'yes':
+                self.update()
+    
+    def confirm_update(self):
+            MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.version.local_version_txt} \
+                                                версия для обновления - {self.version.remote_version}.\nОбновить?')
+            if MsgBox == 'yes':
+                tk.messagebox.showinfo('Обновление','Дождитесь скачивания новой версии.\n После скачивания программа будет закрыта, \
+                                        и начнется процесс установки')
+                return True
+            else:
+                return False
 
     def open_change_selected_punkt (self):
         item = self.tree.selection()[0]
