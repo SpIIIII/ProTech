@@ -1,0 +1,1 @@
+small tkinter GUI app to manage week shedule of tasks
