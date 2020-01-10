@@ -18,15 +18,19 @@ class To_Exel(tk.Toplevel):
         self.init_choice()
 
     def caclulateExel(self,whatday,real_now):
-        now= whatday
+        now = whatday
         self.month_punkts = self.punkts.month_punkts(now,annual=False)
         self.annual_punkts = self.punkts.month_punkts(now,annual=True)
-        self.CreateExel(self.month_punkts,self.annual_punkts)
+        self.CreateExel(self.month_punkts,self.annual_punkts, now)
    
-    def CreateExel(self,dayPunkt,yearPunkt):
+    def CreateExel(self, dayPunkt, yearPunkt, date):
+
+        self.month_association_back = {1:' Январь', 2:' Февраль', 3:' Март', 4:' Апрель', 5:' Май', 6:' Июнь', 7:' Июль', 8:' Август',
+                                                        9:' Сентябрь', 10:' Октябрь', 11:' Ноябрь', 12:' Декабрь',}
         self.x=1
         self.y=1
         self.z=0
+        date_for_which = date
 
         # Создаем книку
         book = xlwt.Workbook('utf8')
@@ -79,10 +83,10 @@ class To_Exel(tk.Toplevel):
 
 
         #sheet.row(12).height = 20000
-        sheet.write_merge(1, 1, 1, 7, 'Утверждаю: ________________%s'%self.entry_utv.get(),font1)
-        sheet.write_merge(2, 2, 1, 5, '«__»_____________ %i г.'%self.now1.year,font1)
+        sheet.write_merge(1, 1, 1, 7, 'Утверждаю: ________________%s'%self.entry_utv.get(), font1)
+        sheet.write_merge(2, 2, 1, 5, '«__»_____________ %i г.'%date_for_which.year ,font1)
         sheet.write_merge(5, 5, 6, 8, 'Оперативный план',font2)
-        sheet.write_merge(6, 6, 4, 10, 'работы на %s месяц %i года'%(self.combobox1.get(),self.now1.year ),font2)
+        sheet.write_merge(6, 6, 4, 10, 'работы на %s месяц %i года'%(self.month_association_back[date_for_which.month], date_for_which.year), font2)
         sheet.write_merge(7, 7, 1, 13, 'бригады цифровой связи участка магистральной связи  Донецкой дистанции связи',font2)
         sheet.write_merge(8, 8, 5, 9, 'Донецкой железной дороги',font2)
         sheet.write_merge(10, 13, 1, 1, 'Число месяца',font3)
@@ -114,8 +118,8 @@ class To_Exel(tk.Toplevel):
         sheet.set_print_scaling(100)
 
         #  Сохраняем в файл
-        #print(self.desktop+'/Оперативный %s %i.xls'%(self.combobox1.get(),self.now1.year))
-        book.save(self.desktop+'/Оперативный %s %i.xls'%(self.combobox1.get(),self.now1.year))
+        #print(self.desktop+'/Оперативный %s %i.xls'%(self.combox_month.get(),self.now1.year))
+        book.save(self.desktop+'/Оперативный %s %i.xls'%(self.combox_month.get(),date_for_which.year))
                    
     def caclulateExelFor(self,dayPunkt,yearPunkt):
 
@@ -193,11 +197,11 @@ class To_Exel(tk.Toplevel):
         sheet.write_merge(2, 2, 13, 20, 'Аношкин В.И.',font1)
         sheet.write_merge(3, 3, 13, 20, '«____» ____________%s г.'%realNow.year,font1)
         
-        sheet.write_merge(5, 5, 1, 23, 'Четырехнедельный план-график технического обслуживания устройств связи на %s %s года бригады цифровой'%(self.combobox1.get(),nowWithMonth.year),font2)
+        sheet.write_merge(5, 5, 1, 23, 'Четырехнедельный план-график технического обслуживания устройств связи на %s %s года бригады цифровой'%(self.combox_month.get(),nowWithMonth.year),font2)
         sheet.write_merge(6, 6, 2, 20, 'связи участка магистральной связи Донецькой дистанции  связи Донецкой железной дороги',font2)
         
         sheet.write_merge(8, 8, 1,9, 'Месяц/день недели',font3)
-        sheet.write_merge(9, 11, 1,9, '%s'%self.combobox1.get(),font3)
+        sheet.write_merge(9, 11, 1,9, '%s'%self.combox_month.get(),font3)
 
         sheet.write(12,1, 'Наименовние инструкций',font4)
         sheet.write(12,2, '№ работ из Перечня работ',font4)
@@ -276,7 +280,7 @@ class To_Exel(tk.Toplevel):
         
         sheet.portrait = False
         sheet.set_print_scaling(100)
-        book.save(self.desktop+'/Четырёхнедельный %s %i.xls'%(self.combobox1.get(),self.now1.year) ) 
+        book.save(self.desktop+'/Четырёхнедельный %s %i.xls'%(self.combox_month.get(),self.now1.year) ) 
 
     def WhatDistant(self,targetText):
         return (len(targetText)//20+1)*300
@@ -289,7 +293,7 @@ class To_Exel(tk.Toplevel):
             self.entry_utv.configure(style="Black.TEntry")
 
     def on_entry_click1(self,event):
-        if self.entry_set.get() == 'ШНС Шипин':
+        if self.entry_set.get() == 'ШЧИ Маленда':
             self.entry_set.delete(0, "end")                 # delete all the text in the entry
             self.entry_set.insert(0, '')                    #Insert blank for user input
             self.entry_set.configure(style="Black.TEntry")  #entry.config(fg = 'black')
@@ -311,7 +315,7 @@ class To_Exel(tk.Toplevel):
 
     def on_focusout1(self,event):
         if self.entry_set.get() == '':
-            self.entry_set.insert(0, 'ШНС Шипин')
+            self.entry_set.insert(0, 'ШЧИ Маленда')
             self.entry_set.configure(style="Red.TEntry")
 
     def on_focusout2(self,event):
@@ -344,23 +348,33 @@ class To_Exel(tk.Toplevel):
         self.textForDo= tk.StringVar()
 
         self.now1=datetime.datetime.now()
-        month_association={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
+        self.month_association = {' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
         
         
-        self.combobox1=ttk.Combobox(self,values=[u' Январь',u' Февраль',u' Март',u' Апрель',u' Май',u' Июнь',u' Июль',u' Август',
-                                                        u' Сентябрь',u' Октябрь',u' Ноябрь',u' Декабрь'])
-        self.combobox1.current(self.now1.month-1)
-        self.combobox1.place(x=270,y=20)
+        
+        self.combox_month=ttk.Combobox(self,values=[' Январь',' Февраль',' Март',' Апрель',' Май',' Июнь',' Июль',' Август',
+                                                        ' Сентябрь',' Октябрь',' Ноябрь',' Декабрь'])
+        self.combox_month.current(self.now1.month-1)
+        self.combox_month.place(x=270, y=20)
+
+        years = [i for i in range(self.now1.year-5,self.now1.year+7)]
+        self.combox_year=ttk.Combobox(self,values=years)
+        self.combox_year.current(years.index(self.now1.year))
+        self.combox_year.place(x=270, y=50)
 
 
         self.buttonOper=ttk.Button(self,text="Оперативный")
         self.buttonOper.place(x=20,y=170)
-        self.buttonOper.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(self.now1.year,month_association[self.combobox1.get()],1), self.now1))
+        self.buttonOper.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(int(self.combox_year.get()), 
+                                                                                                self.month_association[self.combox_month.get()],
+                                                                                                1), self.now1))
      
         self.buttonFor=ttk.Button(self,text="Четырёхнедельный")
         self.buttonFor.place(x=140,y=170)
-        self.buttonFor.bind('<Button-1>', lambda event: self.caclulateExelFor(datetime.datetime(self.now1.year,month_association[self.combobox1.get()],1),self.now1))
+        self.buttonFor.bind('<Button-1>', lambda event: self.caclulateExelFor(datetime.datetime(int(self.combox_year.get()), 
+                                                                                                self.month_association[self.combox_month.get()],
+                                                                                                1),self.now1))
 
         label_utv=tk.Label(self, text="Утвердил")
         label_utv.place(x=20,y=20)
@@ -378,7 +392,7 @@ class To_Exel(tk.Toplevel):
         self.entry_utv.place(x=100,y=20)
         
         self.entry_set=ttk.Entry(self)
-        self.entry_set.insert(0, 'ШНС Шипин')
+        self.entry_set.insert(0, 'ШЧИ Маленда')
         self.entry_set.bind('<FocusIn>', self.on_entry_click1)
         self.entry_set.bind('<FocusOut>', self.on_focusout1)
         self.entry_set.configure(style="Red.TEntry")
