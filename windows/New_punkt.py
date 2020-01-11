@@ -6,7 +6,7 @@ class New_Punkt(tk.Toplevel):
     def __init__ (self, main):
         self.main = main
         super().__init__ (self.main)
-        self.punkts = self.main.punkts
+        self.Punkts = self.main.Punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.init_new_punkt()
 
@@ -183,12 +183,12 @@ class New_Punkt(tk.Toplevel):
         button_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
         button_cancel.place(x=100,y =377)
 
-        button_del = ttk.Button(self, text='Удалить', command= lambda:(self.punkts.delete_punkt_by_name(self.entry_de1.get()+' '),self.main.refresh_tree_view(),self.punkts.re_read()))
+        button_del = ttk.Button(self, text='Удалить', command= lambda:(self.Punkts.delete_punkt_by_name(self.entry_de1.get()+' '),self.main.refresh_tree_view(),self.Punkts.re_read()))
         button_del.place(x=270,y =377)
 
-        button_add = ttk.Button(self,text = "Добавить",command= lambda :(self.main.refresh_tree_view(),self.punkts.re_read()))
+        button_add = ttk.Button(self,text = "Добавить",command= lambda :(self.main.refresh_tree_view(),self.Punkts.re_read()))
         button_add.place(x=13,y =377)
-        button_add.bind('<Button-1>', lambda event1: self.punkts.insert_punkt(self.entry_de1.get()+' ',
+        button_add.bind('<Button-1>', lambda event1: self.Punkts.insert_punkt(self.entry_de1.get()+' ',
                                                                         self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),

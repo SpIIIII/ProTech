@@ -13,122 +13,21 @@ class To_Exel(tk.Toplevel):
     def __init__ (self, main):
         self.main = main
         super().__init__ (self.main)
-        self.punkts = self.main.punkts
+        self.Outputter = self.main.Outputter
+        self.Punkts = self.main.Punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.init_choice()
 
-    def caclulateExel(self,whatday,real_now):
-        now = whatday
-        self.month_punkts = self.punkts.month_punkts(now,annual=False)
-        self.annual_punkts = self.punkts.month_punkts(now,annual=True)
-        self.CreateExel(self.month_punkts,self.annual_punkts, now)
-   
-    def CreateExel(self, dayPunkt, yearPunkt, date):
-
-        self.month_association_back = {1:' Январь', 2:' Февраль', 3:' Март', 4:' Апрель', 5:' Май', 6:' Июнь', 7:' Июль', 8:' Август',
-                                                        9:' Сентябрь', 10:' Октябрь', 11:' Ноябрь', 12:' Декабрь',}
-        self.x=1
-        self.y=1
-        self.z=0
-        date_for_which = date
-
-        # Создаем книку
-        book = xlwt.Workbook('utf8')
-        
-        # Создаем шрифт
-        font1 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold on,\
-            italic off; align: wrap off, vert top, horiz left;')
-        font2 = xlwt.easyxf('font: height 280,name Times_New_Roman,colour_index black, bold on,\
-            italic off; align: vertical center, horizontal center, wrap off;')
-        font2_1 = xlwt.easyxf('font: height 280,name Times_New_Roman,colour_index black, bold on,\
-            italic off; align: vertical center, horizontal left, wrap off;')
-        font3 = xlwt.easyxf('font: height 240,name Times_New_Roman,colour_index black, bold off,\
-            italic off; align: vertical top, horizontal center, wrap on;\
-            borders: left thin, right thin, top thin, bottom thin;')
-   
-        # Добавляем лист
-        sheet = book.add_sheet('sheetname',cell_overwrite_ok=True)
-        self.l=0
-        for i in dayPunkt:
-            sheet.row(self.z+14).height_mismatch = True
-            sheet.row(self.z+14).height = 1000
-            sheet.write_merge(self.z+14,self.z+14, 7, 8, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 9, 10, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 11, 11, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 12, 13, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 14, 14, '',font3)
-            self.z+=1
-            self.l+=1
-
-        sheet.write_merge(self.l+15,self.l+15, 1, 8, 'Составил: _____________ %s'%self.entry_set.get(),font2_1)
-       
-        for i in dayPunkt:
-            # Заполняем ячейку число (Строка, Колонка, Текст, Шрифт)
-            sheet.write(self.x+13,1,str(dayPunkt[self.x-1][0]),font3)
-            sheet.write(self.x+13,12,'%s'%self.entry_do.get('1.0', tk.END),font3)
-            self.x+=1
-        self.x=1
-        
-        for i in dayPunkt:
-            # Заполняем ячейку номура пунктов (Строка, Колонка, Текст, Шрифт)
-            sheet.write_merge(self.x+13,self.x+13,2,5,str((dayPunkt[self.x-1][1])),font3)
-            self.x+=1  
-        self.x=1
-
-        for i in yearPunkt:
-            # Заполняем ячейку годовой пункт (Строка, Колонка, Текст, Шрифт)
-            sheet.write_merge(self.x+13,self.x+13,6,6,str(yearPunkt[self.x-1][1]),font3)
-            self.x+=1
-            
-
-
-        #sheet.row(12).height = 20000
-        sheet.write_merge(1, 1, 1, 7, 'Утверждаю: ________________%s'%self.entry_utv.get(), font1)
-        sheet.write_merge(2, 2, 1, 5, '«__»_____________ %i г.'%date_for_which.year ,font1)
-        sheet.write_merge(5, 5, 6, 8, 'Оперативный план',font2)
-        sheet.write_merge(6, 6, 4, 10, 'работы на %s месяц %i года'%(self.month_association_back[date_for_which.month], date_for_which.year), font2)
-        sheet.write_merge(7, 7, 1, 13, 'бригады цифровой связи участка магистральной связи  Донецкой дистанции связи',font2)
-        sheet.write_merge(8, 8, 5, 9, 'Донецкой железной дороги',font2)
-        sheet.write_merge(10, 13, 1, 1, 'Число месяца',font3)
-        sheet.write_merge(10, 11, 2, 6, 'Работы, которые выполняются на участке по плану-графику',font3)
-        sheet.write_merge(12, 13, 2, 5, 'Четырехнедельным',font3)
-        sheet.write_merge(12, 13, 6, 6, 'годовым',font3)
-        sheet.write_merge(10, 13, 7, 8, 'Непредвиденные работы',font3)
-        sheet.write_merge(10, 13, 9, 10, 'Невыполнен-ные работы по техническому обслуживанию',font3)
-        sheet.write_merge(10, 13, 11, 11, 'Вынужденные изменения в плане',font3)
-        sheet.write_merge(10, 13, 12, 13, 'Исполнитель',font3)
-        sheet.write_merge(10, 13, 14, 14, 'Отметка о выполнении работ (под-пись)',font3)
-
-        # Высота строки
-        sheet.row(11).height_mismatch = True
-        sheet.row(11).height = 410
-
-        # Высота строки
-        sheet.row(13).height_mismatch = True
-        sheet.row(13).height = 760
-
-        # Ширина колонки
-        sheet.col(0).width = 1500
-        sheet.col(14).width = 3500
-
-        # Лист в положении "альбом"
-        sheet.portrait = False
-
-        # Масштабирование при печати
-        sheet.set_print_scaling(100)
-
-        #  Сохраняем в файл
-        #print(self.desktop+'/Оперативный %s %i.xls'%(self.combox_month.get(),self.now1.year))
-        book.save(self.desktop+'/Оперативный %s %i.xls'%(self.combox_month.get(),date_for_which.year))
-                   
+    def create_Exel_operation(self, date, *names):
+        self.Outputter.operational_to_exel(date, *names)
+              
     def caclulateExelFor(self,dayPunkt,yearPunkt):
 
-        self.punktNumber=[i.name for i in self.punkts]
+        self.punktNumber=[i.name for i in self.Punkts]
         self.textPunktNumber=''
         self.CreateExelFor(dayPunkt,yearPunkt)
 
     def CreateExelFor(self,nowWithMonth,realNow):
-
         forNow=nowWithMonth
         book=xlwt.Workbook('utf8')
         sheet=book.add_sheet('sheetname',cell_overwrite_ok=True)
@@ -232,7 +131,7 @@ class To_Exel(tk.Toplevel):
 
         x=1
         z=0
-        for row in self.punkts:
+        for row in self.Punkts:
             if not row.is_annual():
                 sheet.write_merge(z+13, z+15, x,x,row.instruction+'\n'+ row.name +'\n'+row.order,font3)     # fill "Наименование инструкций" column
 
@@ -365,23 +264,23 @@ class To_Exel(tk.Toplevel):
 
 
         self.buttonOper=ttk.Button(self,text="Оперативный")
-        self.buttonOper.place(x=20,y=170)
-        self.buttonOper.bind('<Button-1>', lambda event: self.caclulateExel(datetime.datetime(int(self.combox_year.get()), 
+        self.buttonOper.place(x=20, y=170)
+        self.buttonOper.bind('<Button-1>', lambda event: self.create_Exel_operation(datetime.datetime(int(self.combox_year.get()), 
                                                                                                 self.month_association[self.combox_month.get()],
-                                                                                                1), self.now1))
+                                                                                                1), self.entry_utv.get(), self.entry_set.get(), self.entry_do.get('1.0', tk.END) ))
      
         self.buttonFor=ttk.Button(self,text="Четырёхнедельный")
-        self.buttonFor.place(x=140,y=170)
+        self.buttonFor.place(x=140, y=170)
         self.buttonFor.bind('<Button-1>', lambda event: self.caclulateExelFor(datetime.datetime(int(self.combox_year.get()), 
                                                                                                 self.month_association[self.combox_month.get()],
                                                                                                 1),self.now1))
 
         label_utv=tk.Label(self, text="Утвердил")
-        label_utv.place(x=20,y=20)
+        label_utv.place(x=20, y=20)
         label_set=tk.Label(self, text="Составил")
-        label_set.place(x=20,y=50)
+        label_set.place(x=20, y=50)
         label_do=tk.Label(self, text="Исполнители")
-        label_do.place(x=20,y=80)
+        label_do.place(x=20, y=80)
 
         
         self.entry_utv=ttk.Entry(self)
@@ -389,18 +288,18 @@ class To_Exel(tk.Toplevel):
         self.entry_utv.bind('<FocusIn>', self.on_entry_click)
         self.entry_utv.bind('<FocusOut>', self.on_focusout)
         self.entry_utv.configure(style="Red.TEntry")
-        self.entry_utv.place(x=100,y=20)
+        self.entry_utv.place(x=100, y=20)
         
         self.entry_set=ttk.Entry(self)
         self.entry_set.insert(0, 'ШЧИ Маленда')
         self.entry_set.bind('<FocusIn>', self.on_entry_click1)
         self.entry_set.bind('<FocusOut>', self.on_focusout1)
         self.entry_set.configure(style="Red.TEntry")
-        self.entry_set.place(x=100,y=50)
+        self.entry_set.place(x=100, y=50)
 
         self.entry_do=tk.Text(self,height=3,width=35,font='Times_New_Roman 10',wrap=tk.WORD)
         
-        self.entry_do.place(x=100,y=80)
+        self.entry_do.place(x=100, y=80)
         #self.text1=self.entry_do.get('1.0', tk.END)
 
         self.grab_set()

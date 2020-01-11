@@ -5,8 +5,8 @@ import datetime as dt
 import numpy as np
 import calendar
 from matplotlib.figure import Figure
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import LightSource
+from mpl_toolkits.mplot3d import Axes3D, proj3d
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
     
@@ -52,7 +52,7 @@ class Plot:
             
             # init figure and axes
             self.fig = plt.figure()
-            self.ax = plt.axes(projection='3d')
+            self.ax = self.fig.add_subplot(111, projection='3d')
             
             # call draw plot func
             self.draw_plot(0)
@@ -85,9 +85,9 @@ class Plot:
         # actualy draw a plot
         for i,_ in enumerate(self.regular_punkts_quantity):
             self.ax.bar3d(self.week_of_month[i], self.days_of_week[i], 0, 0.3, 0.3, self.regular_punkts_quantity[i], 
-                color= 'red' if self.selected_punkt[i] else 'paleturquoise')
+                color= 'red' if self.selected_punkt[i] else 'paleturquoise', label = 'Обычный пункт')
             self.ax.bar3d(self.week_of_month[i], self.days_of_week[i], self.regular_punkts_quantity[i], 0.3, 0.3,
-                            self.annual_punkts_quantity[i], color= 'red' if self.selected_punkt[i] else 'orange', alpha = self.alpha[i], zsort='max')
+                            self.annual_punkts_quantity[i], color= 'red' if self.selected_punkt[i] else 'orange', alpha = self.alpha[i], zsort='max', label = 'Годовой пункт')
 
     def update_plot(self):
         self.ani._step()
