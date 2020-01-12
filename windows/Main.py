@@ -1,4 +1,5 @@
 import tkinter as tk
+import config
 import datetime
 from tkinter import ttk
 from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis, Show_punkt

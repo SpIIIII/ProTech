@@ -1,13 +1,15 @@
 import requests
 import tkinter
+import config
 import re
 
 class Versions:
     def __init__ (self):
-        self.urls_of_remote_version = ["http://68.183.208.74/", "http://68.183.208.74/file_storage/ProTech/"]
+        self.urls_of_remote_version = config.remmotes
         with open('.version', 'r') as f:
             self.local_version_txt = f.read()
         self.local_version = self.version_to_int(self.local_version_txt)
+        config.version = self.local_version_txt
         
     def get_responce(self):
         """ function to get remote version and link to update """
