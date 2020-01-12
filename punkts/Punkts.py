@@ -1,19 +1,21 @@
 import datetime
 import calendar
 import tkinter as tk
+from typing import List
+
 
 class Punkt:
-    def __init__ (self,*args,db=None):
+    def __init__(self,*args,db=None)-> None:
         self.db = db
         self.name,self.description,self.period,self.day_of_week,self.month,self.instruction,\
         self.order,self.responsible,self.equipment,self.shift_week = args[0][1:]
 
-    def is_annual (self):
+    def is_annual (self)-> bool:
         if self.period == ' раз 12 месяцев' or self.period == ' раз в 6 месяцев' or self.period == ' раз в 3 месяца':
             return True
         return False
         
-    def is_today (self, date, annual=None)->bool:
+    def is_today(self, date, annual=None)-> bool:
         date_to_check = date        
         weekday=(date_to_check.weekday())
         month = date.month       
@@ -23,7 +25,7 @@ class Punkt:
         association={' пн.':0,' вт.':1,' ср.':2,' чт.':3,' пт.':4}
         associationforMonth={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
                                                         ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
-        def check_cycle():
+        def check_cycle()-> bool:
             if weekday !=6 and weekday !=5 :
                 if self.period == ' ежедневно':
                     return True
@@ -60,59 +62,56 @@ class Punkt:
 
         if annual is None:
             return check_cycle()
-            
 
         if annual == self.is_annual():
             return check_cycle()
 
         return False 
 
-    def delete(self):
+    def delete(self)-> None:
         self.db.delet_data(self.name)
 
-    def GUI_delete(self):
+    def GUI_delete(self)-> None:
         question = tk.messagebox.askquestion('Удаление',f'Вы собираетесь удалить пункт {self.name}.\nУдалить пункт?')
         if question == 'yes':
             self.delete()
             tk.messagebox.showinfo('Готово',f'Пункт {self.name} удален')
 
-
-    def update(self,*args):
+    def update(self, *args)-> None:
         self.db.update_data(*args)
 
-    def __str__(self):
+    def __str__(self)-> None:
         return f"===============\nпункт: {self.name}\nописание: {self.description}\
             \nпериодичность: {self.period}\nдень: {self.day_of_week}\nМесяц: {self.month}\
             \nинструкция: {self.instruction}\nприказ: {self.order}\nответственный: {self.responsible}\
             \nоборудование: {self.equipment}\nсдвиг: {self.shift_week}\n==============="
 
 
-
 class PunktsIterator:
-    def __init__(self,punkts)->None:
-        self._punkts = punkts
+    def __init__(self, Punkts)->None:
+        self._Punkts = Punkts
         self.index = 0
-    def __next__(self):
-        if self.index < len(self._punkts.all_punkts):
-            res = self._punkts.all_punkts[self.index]
+
+    def __next__(self)-> Punkt:
+        if self.index < len(self._Punkts.all_punkts):
+            res = self._Punkts.all_punkts[self.index]
             self.index+=1
             return res
         raise StopIteration
-
 
 
 class Punkts:
     class __Punkts():
         """ class for manages all punkts
         """
-        def __init__(self,db):
+        def __init__(self,db)-> None:
             self.db=db
             self.fill_punkts()
             
-        def __iter__(self):
-            return(PunktsIterator(self))
+        def __iter__(self)-> PunktsIterator:
+            return PunktsIterator(self)
 
-        def __len__(self):
+        def __len__(self)-> int:
             return len(self.__all_punkts)
 
         def insert_punkt (self, name, description, period, day_of_week, month, instruction, order, responsible, equipment, shift)-> None:
@@ -168,7 +167,7 @@ class Punkts:
         
                                 
     instance = None
-    def __new__(cls,db):
+    def __new__(cls, db)-> __Punkts:
         if not Punkts.instance:
             Punkts.instance = Punkts.__Punkts(db)
         return Punkts.instance

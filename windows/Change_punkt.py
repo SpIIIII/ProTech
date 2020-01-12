@@ -6,7 +6,7 @@ class Change(tk.Toplevel):
         super().__init__ (main)
         self.main=main
         self.chengebl_punkt = onePunkt
-        self.punkts = self.main.punkts
+        self.Punkts = self.main.Punkts
         self.bind('<Escape>', lambda e: self.destroy())
         self.title("Изменение пункта")
         self.geometry("600x350")

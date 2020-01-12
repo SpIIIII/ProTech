@@ -4,10 +4,10 @@ import textwrap
 
 
 class ShowOneDay(tk.Toplevel):
-    def __init__ (self,main):
+    def __init__ (self, main):
         self.main = main
         super().__init__ (self.main)
-        self.punkts = self.main.punkts
+        self.Punkts = self.main.Punkts
         self.bind('<Escape>', lambda e:self.destroy())
         self.show_onedaypunkt()
 
@@ -34,7 +34,7 @@ class ShowOneDay(tk.Toplevel):
          
         self.sctribeTree.configure(yscrollcommand=self.scrollbar.set)
    
-        for x in self.punkts.today_punkts(name_only=False):
+        for x in self.Punkts.today_punkts(name_only=False):
             self.sctribeTree.insert("", "end", values=(x.name, '\n'.join(textwrap.wrap(x.description,35))))
             
         self.wait_visibility()
