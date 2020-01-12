@@ -128,17 +128,17 @@ class Main(tk.Frame):
 
     def init_update_check(self):
         if self.Updater.need_update():
-            ask = tk.messagebox.askquestion('Доступно обновление', f'Текущая версия - {self.Version.local_version_txt}. \
+            ask = tk.messagebox.askquestion('Доступно обновление', f'Текущая версия - {self.Version.local_version_txt}.\
                                             \nДоступно обновление до версии {self.Version.remote_version_txt}\nОбновить?')
             if ask == 'yes':
                 self.update()
     
     def confirm_update(self):
             MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.Version.local_version_txt} \
-                                                версия для обновления - {self.Version.remote_version}.\nОбновить?')
+                                                \nверсия для обновления - {self.Version.remote_version_txt}.\nОбновить?')
             if MsgBox == 'yes':
                 tk.messagebox.showinfo('Обновление','Дождитесь скачивания новой версии.\n После скачивания программа будет закрыта, \
-                                        и начнется процесс установки')
+                                        и начнется процес установки')
                 return True
             else:
                 return False
