@@ -1,35 +1,35 @@
 import tkinter as tk
+import config
 import datetime
 from tkinter import ttk
 from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis, Show_punkt
 
 
 class Main(tk.Frame):
-
-    def __init__ (self, root, punkts, veison, updater, plot):
+    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter):
         super().__init__(root)
         self.root = root
-        self.plot = plot
-        self.updater = updater
-        self.version = veison
-        self.punkts = punkts
+        self.Punkts = Punkts
+        self.Version = Veison
+        self.Updater = Updater
+        self.Plot = Plot
+        self.Outputter = Outputter
+
+        # sub windows        
         self.change_punkt = Change_punkt.Change
-        root.protocol("WM_DELETE_WINDOW", root.quit)
         self.Show_punkt = Show_punkt.Show_punkt
+        self.To_exel = To_exel.To_Exel
+
+        root.protocol("WM_DELETE_WINDOW", root.quit)
         self.init_main()
         
         
     def init_main(self):
-
         self.now1 = datetime.datetime.now()
-        
-        '''
-        association1={' Январь':1,' Февраль':2,' Март':3,' Апрель':4,' Май':5,' Июнь':6,' Июль':7,' Август':8,
-                                                        ' Сентябрь':9,' Октябрь':10,' Ноябрь':11,' Декабрь':12}
-        '''  
+
         # Draw Frames    
-        main_frame = tk.Frame(bd = 2)
-        main_frame.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=True)
+        main_frame = tk.Frame(bd=2)
+        main_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         # Draw MenuBar
         menubar = tk.Menu()
@@ -43,24 +43,24 @@ class Main(tk.Frame):
         filemenu.add_command(label="Выход", command=self.root.quit)
 
         programmenu = tk.Menu(menubar, tearoff=0)
-        programmenu.add_command(label='Обновить программу', command=self.updater.start)
+        programmenu.add_command(label='Обновить программу', command=self.update)
         
         menubar.add_cascade(label="Файл", menu=filemenu)
         menubar.add_cascade(label="Программа", menu=programmenu)
         self.root.config(menu=menubar)
 
         # Draw Labels
-        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.punkts.today_punkts(name_only = True)),bd=1,relief=tk.SUNKEN,anchor=tk.W)
-        label_on_root.pack(side=tk.BOTTOM,fill =tk.X)
+        label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.Punkts.today_punkts(name_only=True)), bd=1, relief=tk.SUNKEN, anchor=tk.W)
+        label_on_root.pack(side=tk.BOTTOM, fill =tk.X)
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
         
         # Draw TreeView      
-        self.tree=ttk.Treeview(main_frame, columns =('ID','description','day','month'),height=15,show='headings')
+        self.tree=ttk.Treeview(main_frame, columns =('ID', 'description', 'day', 'month'), height=15, show='headings')
        
-        self.tree.column('ID', width=80,anchor=tk.CENTER)
-        self.tree.column('description', width=350,anchor=tk.E)
-        self.tree.column('day', width=100,anchor=tk.CENTER)
-        self.tree.column('month', width=50,anchor=tk.CENTER)
+        self.tree.column('ID', width=80, anchor=tk.CENTER)
+        self.tree.column('description', width=350, anchor=tk.E)
+        self.tree.column('day', width=100, anchor=tk.CENTER)
+        self.tree.column('month', width=50, anchor=tk.CENTER)
         
         self.tree.heading('ID', text='номер')
         self.tree.heading('description', text='краткое описание')
@@ -68,7 +68,7 @@ class Main(tk.Frame):
         self.tree.heading('month', text='день')
         self.tree.bind('<Button-3>',self.drop_popup_menu)
         self.tree.bind("<Double-1>", self.show_punkt)
-        self.tree.pack(side=tk.BOTTOM,fill=tk.BOTH, expand=tk.YES)
+        self.tree.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
         self.fill_tree_view()
         
         # Create a popup menu
@@ -80,13 +80,18 @@ class Main(tk.Frame):
 
         self.tree_item = ''
 
+        try:
+            self.init_update_check()
+        except:
+            pass
+
     def show_punkt(self, event):
         """ action when doubleclick the treeview"""
         iid = self.tree.identify_row(event.y)
         self.tree.selection_set(iid)
         item = self.tree.selection()[0]
         name = self.tree.item(item,'values')[0]
-        punkt = self.punkts.get_punkt(name)
+        punkt = self.Punkts.get_punkt(name)
         self.open_show_punkt(punkt)
 
     def drop_popup_menu(self, event):
@@ -102,11 +107,11 @@ class Main(tk.Frame):
 
     def delete (self):
         item = self.tree.selection()[0]
-        self.punkts.get_punkt(self.tree.item(item,'values')[0]).GUI_delete()
+        self.Punkts.get_punkt(self.tree.item(item,'values')[0]).GUI_delete()
         self.refresh_tree_view()
        
     def fill_tree_view(self):
-        for row in self.punkts.re_read():
+        for row in self.Punkts.re_read():
             self.tree.insert('', 'end', values=(row.name,row.description,row.period,row.day_of_week))
         
     def refresh_tree_view(self):
@@ -114,10 +119,34 @@ class Main(tk.Frame):
             self.tree.delete(i)
         self.fill_tree_view()
 
+    def update(self):
+        if self.Updater.need_update():
+            if self.confirm_update():
+                self.Updater.start()
+        else:
+            tk.messagebox.showinfo('Up to date',f'Текущая версия ({self.Version.local_version_txt}) обновлена')
+
+    def init_update_check(self):
+        if self.Updater.need_update():
+            ask = tk.messagebox.askquestion('Доступно обновление', f'Текущая версия - {self.Version.local_version_txt}.\
+                                            \nДоступно обновление до версии {self.Version.remote_version_txt}\nОбновить?')
+            if ask == 'yes':
+                self.update()
+    
+    def confirm_update(self):
+            MsgBox = tk.messagebox.askquestion ('Обновить?',f'Текущая версия - {self.Version.local_version_txt} \
+                                                \nверсия для обновления - {self.Version.remote_version_txt}.\nОбновить?')
+            if MsgBox == 'yes':
+                tk.messagebox.showinfo('Обновление','Дождитесь скачивания новой версии.\n После скачивания программа будет закрыта, \
+                                        и начнется процес установки')
+                return True
+            else:
+                return False
+
     def open_change_selected_punkt (self):
         item = self.tree.selection()[0]
         punkt_name = self.tree.item(item,'values')[0]
-        self.change_punkt(self, self.punkts.get_punkt(punkt_name)) 
+        self.change_punkt(self, self.Punkts.get_punkt(punkt_name)) 
 
     def open_add_new_punkt(self):
         New_punkt.New_Punkt(self)
@@ -126,7 +155,7 @@ class Main(tk.Frame):
         self.Show_punkt(self, punkt)
 
     def open_To_Exel(self):
-        To_exel.To_Exel(self)
+        self.To_exel(self)
 
     def open_Show(self):
         Show_one_day.ShowOneDay(self)

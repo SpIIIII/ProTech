@@ -6,7 +6,7 @@ from random import randrange
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class Analysis(tk.Toplevel):
-    def __init__(self,main):
+    def __init__(self, main):
         self.main = main
         super().__init__(self.main)
         self.title("Анализ")
@@ -15,8 +15,8 @@ class Analysis(tk.Toplevel):
         self.minsize(600,350)
         self.bind('<Escape>', lambda e: self.exit())
         self.protocol("WM_DELETE_WINDOW", self.exit)
-        self.plot = self.main.plot
-        self.punkts = self.main.punkts
+        self.Plot = self.main.Plot
+        self.Punkts = self.main.Punkts
         
         self.curent_date = dt.datetime.now()
         
@@ -28,16 +28,15 @@ class Analysis(tk.Toplevel):
     
     def update_plot(self,event):
             # inject data that need to be plotted
-            self.plot.set_data(self.combox_punkts.get(), self.combox_month.get())
+            self.Plot.set_data(self.combox_punkts.get(), self.combox_month.get())
             # update plot
-            self.plot.update_plot()
+            self.Plot.update_plot()
 
     def init_analysis(self):
-        if len(self.punkts)==0:
+        if len(self.Punkts)==0:
             tk.messagebox.showerror('Пусто',"Похоже пока нету ни одного пункта.\n Пожалуйста сначала добавьте пункты для выполнения")
             self.destroy()
         else:
-        
             ## add frames
             top_frame = ttk.Frame(self, height=68)
             top_frame.pack(side=tk.TOP,fill=tk.BOTH, expand=True)
@@ -73,21 +72,21 @@ class Analysis(tk.Toplevel):
             self.combox_punkts.place(x=340,y=45)
             def create_combox_punkts(period):
                 if period == ' Все':
-                    punkts_to_fill = [i.name for i in self.punkts]
+                    punkts_to_fill = [i.name for i in self.Punkts]
                     self.combox_punkts.config(values=punkts_to_fill)
                     self.combox_punkts.current(randrange(0,len(punkts_to_fill)))
                 else:
-                    punkts_to_fill = [i.name for i in self.punkts if i.period == period]
+                    punkts_to_fill = [i.name for i in self.Punkts if i.period == period]
                     self.combox_punkts.config(values=punkts_to_fill)
                     self.combox_punkts.current(randrange(0,len(punkts_to_fill)))
             create_combox_punkts(' Все')
                 
             # create period_combobox
-            periods = sorted([i for i in set(i.period for i in self.punkts)])
+            periods = sorted([i for i in set(i.period for i in self.Punkts)])
             periods.append(' Все')
             self.combox_periods = ttk.Combobox(top_frame,values=periods,justify='center')
             self.combox_periods.current(len(periods)-1)
-            self.combox_periods.place(x=470,y=45)
+            self.combox_periods.place(x=470, y=45)
             self.combox_periods.bind("<<ComboboxSelected>>", lambda x: (create_combox_punkts(self.combox_periods.get()),self.update_plot(None)))
 
             # create buttons
@@ -95,12 +94,12 @@ class Analysis(tk.Toplevel):
             self.show_punkt_botton.place(x=115, y=41.5)
 
             # set data and plot it initialy
-            self.plot.set_data(self.combox_punkts.get(), self.combox_month.get())
-            self.plot.init_plot(bottom_frame)
+            self.Plot.set_data(self.combox_punkts.get(), self.combox_month.get())
+            self.Plot.init_plot(bottom_frame)
                 
 
             self.grab_set()
             self.focus_set()
 
     def open_show_punkt(self):
-        self.main.Show_punkt(self.main,self.punkts.get_punkt(self.combox_punkts.get()))
+        self.main.Show_punkt(self.main,self.Punkts.get_punkt(self.combox_punkts.get()))
