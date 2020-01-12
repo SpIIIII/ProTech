@@ -28,7 +28,6 @@ class Updater:
                
     def download (self)-> None:
         self.url_to_download = self.versions.download_link + 'ProTech_32.exe' #"http://68.183.208.74/ProTech_32.exe"
-        print(self.url_to_download)
         response = requests.get(self.url_to_download)
         self.folder_with_installer = self.temp_folder+'/protech'
         if not os.path.exists(self.folder_with_installer):
