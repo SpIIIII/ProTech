@@ -13,7 +13,8 @@ class Main(tk.Frame):
         self.Updater = Updater
         self.Plot = Plot
         self.Outputter = Outputter
-        
+
+        # sub windows        
         self.change_punkt = Change_punkt.Change
         self.Show_punkt = Show_punkt.Show_punkt
         self.To_exel = To_exel.To_Exel

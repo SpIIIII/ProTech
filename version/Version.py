@@ -8,23 +8,38 @@ class Versions:
         with open('.version', 'r') as f:
             self.local_version_txt = f.read()
         self.local_version = self.version_to_int(self.local_version_txt)
-        self.link_to_download = str()
-    
-    def get_remote_version_txt(self) -> str:
-        """   Get version of program from remote server 68.183.208.74 """
+        
+    def get_responce(self):
+        """ function to get remote version and link to update """
         try:
             for i in self.urls_of_remote_version:
                 responce = requests.get(i, timeout=1)
                 if responce.status_code == 200:
-                    remote_version_txt = self.find_version(responce)
-                    return remote_version_txt
+                    return responce
         except: 
             tkinter.messagebox.showinfo('Connection lost','Не возможно устанвоить соединение с сервером.\n Проверьте наличие подключения \
                                         и повторите попытку')
+    
+    def get_remote_version_txt(self)-> str:
+        """  Get version of program from remote server 68.183.208.74  """
+        responce = self.get_responce()
+        remote_version_txt = self.pars_version(responce)
+        return remote_version_txt
 
-    def find_version(self, responce):
+    def get_download_link(self)-> str:
+        responce = self.get_responce()
+        return self.pars_link(responce)
+
+    def pars_link(self, responce):
+        return responce.url
+        
+    def pars_version(self, responce):
         pattern = r'<h2>\s?(.+)\s?</h2>' 
-        return re.findall(pattern,responce.content.decode())[0]
+        return re.findall(pattern, responce.content.decode())[0]
+
+    @property
+    def download_link(self):
+        return self.get_download_link()
 
     @property
     def remote_version(self):
