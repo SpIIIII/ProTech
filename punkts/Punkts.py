@@ -78,7 +78,6 @@ class Punkt:
             tk.messagebox.showinfo('Готово',f'Пункт {self.name} удален')
 
     def update(self, *args)-> None:
-        print(args)
         self.db.update_data(*args)
 
     def __str__(self)-> None:
