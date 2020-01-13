@@ -33,7 +33,8 @@ class Change(tk.Toplevel):
         
         self.lable_punkt = tk.Label(self, bg='white', text="Пункт")
         self.lable_punkt.place(x=15, y=20)
-        self.entry_punkt = tk.Label(self, bg='white', text=self.chengebl_punkt.name)
+        self.entry_punkt = ttk.Entry(self)
+        self.entry_punkt.insert(0, self.chengebl_punkt.name)
         self.entry_punkt.place(x=100, y=20)
 
         self.lable_inst = tk.Label(self, bg='white', text="Инструкция")
@@ -110,7 +111,8 @@ class Change(tk.Toplevel):
 
         button_add= ttk.Button(self, text="Изменить", command=self.main.refresh_tree_view )
         button_add.place(x=13, y=320)
-        button_add.bind('<Button-1>', lambda event1: self.chengebl_punkt.update(self.entry_de2.get('1.0', tk.END),
+        button_add.bind('<Button-1>', lambda event1: self.chengebl_punkt.update(self.entry_punkt.get(),
+                                                                        self.entry_de2.get('1.0', tk.END),
                                                                         self.combobox1.get(),
                                                                         self.combobox2.get(),
                                                                         self.comboboxYear.get(),

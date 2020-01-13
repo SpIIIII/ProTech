@@ -12,19 +12,19 @@ class DB:
         self.conn.commit()
 
                
-    def insert_data(self, num, description, whenW, whenD,yearM,inst,coma,make,equip,number):
+    def insert_data(self, num, description, whenW, whenD, yearM, inst, coma, make, equip, shift):
         self.c.execute('''INSERT INTO weekSchedule (id, description, whatweek, whatday, yearMonth, instruction, comand, Maker, equipment, shiftweek) 
-                          VALUES (?,?,?,?,?,?,?,?,?,?)''',(num, description, whenW, whenD,yearM,inst,coma,make,equip,number))
+                          VALUES (?,?,?,?,?,?,?,?,?,?)''',(num, description, whenW, whenD, yearM, inst, coma, make, equip, shift))
         self.conn.commit()
 
     def delet_data(self, n):
         self.c.execute('''DELETE FROM weekSchedule WHERE id =? ''',(n,))
         self.conn.commit()
 
-    def update_data(self, description, whenW, whenD, yearM, inst, coma, make, equip, num, number):
-        self.c.execute('''UPDATE weekSchedule SET description = ?, whatweek = ?, whatday = ?, yearMonth = ?, \
+    def update_data(self, new_name, description, whenW, whenD, yearM, inst, coma, make, equip, num, shift):
+        self.c.execute('''UPDATE weekSchedule SET id = ?, description = ?, whatweek = ?, whatday = ?, yearMonth = ?, \
             instruction = ?, comand = ?, Maker = ?, equipment = ?, shiftweek = ? WHERE id = ?''',
-        (description, whenW, whenD, yearM, inst, coma, make, equip, number, num,))
+        (new_name, description, whenW, whenD, yearM, inst, coma, make, equip, shift, num,))
         self.conn.commit()
         
     def read_data(self,num):

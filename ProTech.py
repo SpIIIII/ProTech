@@ -21,7 +21,7 @@ if __name__ ==  "__main__":
     root=tk.Tk()
 
     db=DB.DB()
-
+    
     Version = Version.Versions()
     Updater = Updater.Updater(Version)
     
