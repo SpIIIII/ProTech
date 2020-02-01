@@ -2,11 +2,11 @@ import tkinter as tk
 import config
 import datetime
 from tkinter import ttk
-from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis, Show_punkt
+from . import Show_one_day, Show_punkt, Change_punkt, New_punkt, To_exel, Analysis, Certification_window
 
 
 class Main(tk.Frame):
-    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter):
+    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter, Certifications):
         super().__init__(root)
         self.root = root
         self.Punkts = Punkts
@@ -14,6 +14,7 @@ class Main(tk.Frame):
         self.Updater = Updater
         self.Plot = Plot
         self.Outputter = Outputter
+        self.Certifications = Certifications
 
         # sub windows        
         self.change_punkt = Change_punkt.Change
@@ -35,6 +36,7 @@ class Main(tk.Frame):
         menubar = tk.Menu()
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Добавить пункт", command=self.open_add_new_punkt)
+        filemenu.add_command(label="Паспортизация", command=self.open_certification)
         filemenu.add_command(label="Обновить список", command=self.refresh_tree_view)
         filemenu.add_command(label="Анализ", command=self.open_Analysis)
         filemenu.add_command(label="в Exel", command=self.open_To_Exel)
@@ -159,6 +161,9 @@ class Main(tk.Frame):
 
     def open_Show(self):
         Show_one_day.ShowOneDay(self)
+
+    def open_certification(self):
+        Certification_window.Certification(self)
 
     def open_Analysis(self):
         Analysis.Analysis(self)

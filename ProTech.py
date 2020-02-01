@@ -2,7 +2,9 @@ import tkinter as tk
 import platform
 import config
 import os
-from DB import DB
+
+from DB import DB, DB_certification
+
 from plots import Plot
 from tkinter import ttk
 from windows import Main
@@ -11,6 +13,7 @@ from updater import Updater
 from version import Version
 from datetime import timedelta
 from create_output import Output
+from certification import Certification_schedule
 
    
 
@@ -18,9 +21,10 @@ if __name__ ==  "__main__":
 
     config.IS_WINDOWS = True if platform.system() == 'Windows' else False
    
-    root=tk.Tk()
+    root = tk.Tk()
 
-    db=DB.DB()
+    db = DB.DB()
+    db_c = DB_certification.DB_certification()
     
     Version = Version.Versions()
     Updater = Updater.Updater(Version)
@@ -28,8 +32,9 @@ if __name__ ==  "__main__":
     Punkts = Punkts.Punkts(db)
     Plot = Plot.Plot(Punkts)
     Outputter = Output.Output(Punkts)
+    Certifications = Certification_schedule.Certifications(db_c)
 
-    app = Main.Main(root, Punkts, Version, Updater, Plot, Outputter)
+    app = Main.Main(root, Punkts, Version, Updater, Plot, Outputter, Certifications)
     app.pack()
     root.title("Техпроцесс ")
     root.geometry("580x350+300+220")
