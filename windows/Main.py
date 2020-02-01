@@ -114,7 +114,7 @@ class Main(tk.Frame):
        
     def fill_tree_view(self):
         for row in self.Punkts.re_read():
-            self.tree.insert('', 'end', values=(row.name,row.description,row.period,row.day_of_week))
+            self.tree.insert('', 'end', values=(row.name, row.description, row.period, row.day_of_week))
         
     def refresh_tree_view(self):
         for i in self.tree.get_children():

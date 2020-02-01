@@ -79,6 +79,7 @@ class New_Punkt(tk.Toplevel):
         style.configure("Red.TEntry", foreground="gray")
         style = ttk.Style()
         style.configure("Black.TEntry", foreground="black")
+        
         self.weekday = tk.StringVar()
         self.whatday = tk.StringVar()
         self.whatnumber = tk.StringVar()

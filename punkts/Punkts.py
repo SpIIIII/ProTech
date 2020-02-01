@@ -5,10 +5,10 @@ from typing import List
 
 
 class Punkt:
-    def __init__(self,*args,db=None)-> None:
+    def __init__(self, *args, db=None)-> None:
         self.db = db
         self.name,self.description,self.period,self.day_of_week,self.month,self.instruction,\
-        self.order,self.responsible,self.equipment,self.shift_week = args[0][1:]
+        self.order,self.responsible,self.equipment,self.shift_week = args[0]
 
     def is_annual (self)-> bool:
         if self.period == ' раз 12 месяцев' or self.period == ' раз в 6 месяцев' or self.period == ' раз в 3 месяца':
@@ -121,7 +121,7 @@ class Punkts:
 
         def fill_punkts(self)-> None:
             self.__all_punkts = list()
-            for punkt in self.db.c.execute("SELECT id, * FROM weekSchedule"):
+            for punkt in self.db.c.execute("SELECT * FROM weekSchedule"):
                 self.__all_punkts.append(Punkt(punkt,db=self.db))
 
         @property

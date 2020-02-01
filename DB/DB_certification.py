@@ -6,23 +6,24 @@ class DB_certification:
         self.conn=sqlite3.connect('certification.db')
         self.c = self.conn.cursor()
 
-        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id ROWID, localtion text, executer text, month int)''')
+        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id INTEGER PRIMARY KEY AUTOINCREMENT, equipment text,
+                            localtion text, executer text, month int)''')
         self.c.execute('''select * from certification''')
         self.conn.commit()
-
                
-    def insert_data(self, id, localtion , executer , month):
-        self.c.execute('''INSERT INTO certification (localtion , executer , month) 
-                          VALUES (?,?,?) ''', (localtion , executer , month))
+    def insert_data(self, equipment,  localtion , executer , month):
+        self.c.execute('''INSERT INTO certification (equipment, localtion , executer , month) 
+                          VALUES (?,?,?,?) ''', (equipment, localtion , executer , month))
         self.conn.commit()
 
     def delet_data(self, id):
         self.c.execute('''DELETE FROM certification WHERE id =? ''', (id,))
         self.conn.commit()
 
-    def update_data(self, id, localtion , executer , month):
-        self.c.execute('''UPDATE certification SET  localtion = ?, executer = ?, month = ?,  WHERE id = ?''',
-        (localtion, executer, month, id))
+    def update_data(self, id, equipment, localtion , executer , month):
+        self.c.execute('''UPDATE certification SET equipment=?,  localtion = ?, executer = ?, 
+                            month = ?,  WHERE id = ?''',
+        (equipment, localtion, executer, month, id))
         self.conn.commit()
         
     def read_data(self,num):

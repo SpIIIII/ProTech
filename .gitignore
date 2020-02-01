@@ -120,3 +120,4 @@ weekSchedule*.db
 compile
 Pipfile
 Pipfile.lock
+certification*.db
