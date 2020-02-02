@@ -6,7 +6,7 @@ class DB_certification:
         self.conn=sqlite3.connect('certification.db')
         self.c = self.conn.cursor()
 
-        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id INTEGER PRIMARY KEY AUTOINCREMENT, equipment text,
+        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id INTEGER PRIMARY KEY, equipment text,
                             localtion text, executer text, month int)''')
         self.c.execute('''select * from certification''')
         self.conn.commit()

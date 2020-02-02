@@ -1,6 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 
+class Cert:
+    def __init__(self, cert):
+        self.cert = cert
+    
+    def drop_menu(self, drop_menu):
+        drop_menu()  
+
+
 class Certification(tk.Toplevel):
     def __init__ (self, main):
         super().__init__ (main)
@@ -26,8 +34,9 @@ class Certification(tk.Toplevel):
         self.bottom_frame = ttk.Frame(self)
         self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        self.fill_top_frame()
+        self.fill_top_frame(version=0)
         self.fill_bottom_frame()
+
          # Draw MenuBar
         menubar = tk.Menu()
         filemenu = tk.Menu(menubar, tearoff=0)
@@ -39,14 +48,19 @@ class Certification(tk.Toplevel):
         menubar.add_cascade(label="Файл", menu=filemenu)
         self.config(menu=menubar)
 
-        #fill top_frame
+        # Create a popup menu
+        self.popup_menu = tk.Menu(self, tearoff=0)
+        self.popup_menu.add_command(label='Изменить', command=lambda:1)
+        self.popup_menu.add_command(label='Добавить', command=lambda:1)
+        self.popup_menu.add_separator()
+        self.popup_menu.add_command(label='Удалить', command=self.delete_cert)
 
         self.grab_set()
         self.focus_set()
 
     def fill_bottom_frame(self):
         # create and fill tree view
-        self.certs_tree = ttk.Treeview(self.bottom_frame, columns=('equipment', 'location', 'executer', 'month'), height=15, show='headings')
+        self.certs_tree = ttk.Treeview(self.bottom_frame, columns=( 'equipment', 'location', 'executer', 'month'), height=15, show='headings')
 
         self.certs_tree.column('equipment', width=60, anchor=tk.CENTER)
         self.certs_tree.column('location', width=60, anchor=tk.E)
@@ -57,23 +71,32 @@ class Certification(tk.Toplevel):
         self.certs_tree.heading('location', text='Станция')
         self.certs_tree.heading('executer', text='Исполнитель')
         self.certs_tree.heading('month', text='Месяц')
-        # self.certs_tree.bind('<Button-3>',self.drop_popup_menu)
+        self.certs_tree.bind('<Button-3>',self.drop_popup_menu)
         # self.certs_tree.bind("<Double-1>", self.show_punkt)
         self.certs_tree.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
         
         self.fill_certs_tree()
 
-    def fill_certs_tree(self):
+    def fill_certs_tree(self, equ='Все', loc='Все', exc='Все', mth='Все'):
+        equ, loc, exc, mth = [True if i == 'Все' else i for i in (equ, loc, exc, mth)]
+        print(equ, loc, exc, mth)
         for cert in self.certifications:
-            self.certs_tree.insert('', 'end', values=(cert.equipment, cert.location, cert.executer, 
-                                                        self.Month_assoc_back[cert.month]+', '+self.Month_assoc_back[cert.month+6]))
+            if cert.equipment==equ and cert.location==loc and cert.executer==exc and self.Month_assoc_back[cert.month]==mth:
+                self.certs_tree.insert('', 'end', values=(cert.equipment, cert.location, cert.executer, 
+                                                        self.Month_assoc_back[cert.month]+', '+self.Month_assoc_back[cert.month+6]), 
+                                                        tags=(cert.id,))
+    
+    def refresh_tree_view(self, equ='Все', loc='Все', exc='Все', mth='Все'):
+        for i in self.certs_tree.get_children():
+            self.certs_tree.delete(i)
+        self.fill_certs_tree(equ, loc, exc, mth)
 
     def fill_top_frame(self, version=0):
         for child in self.top_frame.winfo_children():
             child.destroy()
 
         if version == 0:
-            pass
+            self.fill_top_frame_regular(self.top_frame)
         elif version == 1:
             self.fill_top_frame_add(self.top_frame)
             
@@ -143,14 +166,79 @@ class Certification(tk.Toplevel):
         month_start_combo, _ = post_month_comboboxes(month_pair())
 
         # add conform button
-        add_button = ttk.Button(sub_top_frame, text="Добавить", command=lambda:self.certifications.add_cert(self.equipment_entry.get(),
+        add_button = ttk.Button(sub_top_frame, text="Добавить", command=lambda:(self.certifications.add_cert(self.equipment_entry.get(),
                                                                                                 self.location_entry.get(),
                                                                                                 self.executer_entry.get(),
-                                                                                self.Month_assoc[month_start_combo.get()]))
+                                                                                self.Month_assoc[month_start_combo.get()]),
+                                                                                self.certifications.refresh(),
+                                                                                self.refresh_tree_view()))
         add_button.place(x=470, y=20)
 
-    def fill_top_frame_regular(self):
-        pass
+        # add back button
+        back_button = ttk.Button(sub_top_frame, text="Назад", command=lambda: self.fill_top_frame(version=0))
+        back_button.place(x=470, y=43)
+
+    def fill_top_frame_regular(self, frame:tk.Frame)-> None:
+
+        def call_refresh_tree_vie(event):
+            self.refresh_tree_view(equipment_s_combo.get(), location_s_combo.get(), executer_s_combo.get(), month_s_combo.get())
+
+        # block of equipment selection
+        equipment_s_label = tk.Label(frame, text="Оборудование")
+        equipment_s_label.place(x=10, y=5)
+        equipments = [i for i in set(c.equipment for c in self.certifications)]
+        equipments.append("Все")
+        equipment_s_combo = ttk.Combobox(frame, values=equipments)
+        equipment_s_combo.current(len(equipments)-1)
+        equipment_s_combo.bind('<<ComboboxSelected>>', call_refresh_tree_vie)
+        equipment_s_combo.place(x=10, y=25)
+
+        # block of location selection
+        location_s_label = ttk.Label(frame, text="Станция")
+        location_s_label.place(x=150, y=5)
+        locations = [i for i in set(c.location for c in self.certifications)]
+        locations.append("Все")
+        location_s_combo = ttk.Combobox(frame, values=locations)
+        location_s_combo.current(len(locations)-1)
+        location_s_combo.bind('<<ComboboxSelected>>', call_refresh_tree_vie)
+        location_s_combo.place(x=150, y=25)
+        
+        # block of executer selection
+        executer_s_label = ttk.Label(frame, text="Исполнитель")
+        executer_s_label.place(x=290, y=5)
+        executers = [i for i in set(c.executer for c in self.certifications)]
+        executers.append('Все')
+        executer_s_combo = ttk.Combobox(frame, values=executers)
+        executer_s_combo.current(len(executers)-1)
+        executer_s_combo.bind('<<ComboboxSelected>>', call_refresh_tree_vie)
+        executer_s_combo.place(x=290, y=25)
+
+        # block of month selection
+        month_s_label = ttk.Label(frame, text="Месяц")
+        month_s_label.place(x=430, y=5)
+        months = [i for i in set(self.Month_assoc_back[c.month] for c in self.certifications)]
+        months.append('Все')
+        month_s_combo = ttk.Combobox(frame, values=months)
+        month_s_combo.current(len(months)-1)
+        month_s_combo.bind('<<ComboboxSelected>>', call_refresh_tree_vie)
+        month_s_combo.place(x=430, y=25)
+
+    def drop_popup_menu(self, event):
+        """action in event of button 3 on tree view"""
+        # select row under mouse 
+        iid = self.certs_tree.identify_row(event.y)
+        if iid:
+            # mouse pointer over item
+            self.certs_tree.selection_set(iid)
+            self.popup_menu.post(event.x_root, event.y_root)
+        else:
+           pass
+
+    def delete_cert(self):
+        item = self.certs_tree.selection()[0]
+        self.certifications.get_cert_by_id(self.certs_tree.item(item,'tags')[0]).GUI_delete()
+        self.certifications.refresh()
+        self.refresh_tree_view()
 
     # function to set template for equipment entry
     def equipment_entry_FocusIn(self,event):
