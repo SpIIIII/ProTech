@@ -31,12 +31,13 @@ if __name__ ==  "__main__":
     Updater = Updater.Updater(Version)
     
     Punkts = Punkts.Punkts(db)
+    LinePunkts = LineProcessShedule.LinePunkts(db_lp)
+    CertPunkts = LineProcessShedule.CertPunkts(db_c)
     Plot = Plot.Plot(Punkts)
-    Outputter = Output.Output(Punkts)
-    LineProcecesses = LineProcessShedule.LinePunkts(db_lp)
-    Certifications = LineProcessShedule.CertPunkts(db_c)
+    Outputter = Output.Output(Punkts, LinePunkts, CertPunkts)
 
-    app = Main.Main(root, Punkts, Version, Updater, Plot, Outputter, LineProcecesses, Certifications)
+
+    app = Main.Main(root, Punkts, Version, Updater, Plot, Outputter, LinePunkts, CertPunkts)
     app.pack()
     root.title("Техпроцесс ")
     root.geometry("580x350+300+220")

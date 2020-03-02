@@ -7,8 +7,10 @@ from datetime import datetime
 
 
 class Output:
-    def __init__(self, punkts):
+    def __init__(self, punkts, linePunkts, certPunkts):
         self.Punkts = punkts
+        self.LinePunkts = linePunkts
+        self.CertPunkts = certPunkts
 
         if config.IS_WINDOWS:
             self.desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
@@ -20,16 +22,19 @@ class Output:
     def operational_to_exel(self, date:datetime, *names:str)-> None:
         self.calculate_operational(date, *names)
 
-    def forday_to_exel (self, date:datetime, *names:str)-> None:
+    def forday_to_exel(self, date:datetime, *names:str)-> None:
         self.calculate_forday(date, *names)
                 
     def calculate_operational(self, whatday:datetime, *names:str)-> None:
         now = whatday
         self.month_punkts: list = self.Punkts.month_punkts(now, annual=False)
         self.annual_punkts: list = self.Punkts.month_punkts(now, annual=True)
-        self.create_perational_Exel(self.month_punkts,self.annual_punkts, now, *names)
+        self.create_operational_Exel(self.month_punkts,self.annual_punkts, now, *names)
    
-    def create_perational_Exel(self, dayPunkt: list, yearPunkt: list, date: datetime, *names)-> None:
+    def calculate_forday(self, whatday:datetime, *names:str)-> None:
+        self.create_forday_Exel(whatday, *names)
+    
+    def create_operational_Exel(self, dayPunkt: list, yearPunkt: list, date: datetime, *names)-> None:
         self.x=1
         self.y=1
         self.z=0
@@ -117,9 +122,6 @@ class Output:
         #print(self.desktop+'/Оперативный %s %i.xls'%(self.combox_month.get(),self.now1.year))
         book.save(self.desktop+'/Оперативный %s %i.xls'%(self.month_association_back[date_for_which.month], date_for_which.year))
 
-    def calculate_forday(self, whatday:datetime, *names:str)-> None:
-        self.create_forday_Exel(whatday, *names)
-
     def create_forday_Exel(self,nowWithMonth, *names):
         day_for_which = nowWithMonth
         who_approved, who_made, who_execute = names 
@@ -190,8 +192,7 @@ class Output:
         sheet.write_merge(2, 2, 13, 20, 'Аношкин В.И.',font1)
         sheet.write_merge(3, 3, 13, 20, '«____» ____________%s г.'%day_for_which.year,font1)
         
-        sheet.write_merge(5, 5, 1, 23, 'Четырехнедельный план-график технического обслуживания устройств связи на %s %s года \
-бригады цифровой'%(self.month_association_back[day_for_which.month], day_for_which.year),font2)
+        sheet.write_merge(5, 5, 1, 23, 'Четырехнедельный план-график технического обслуживания устройств связи на %s %s года бригады цифровой'%(self.month_association_back[day_for_which.month], day_for_which.year),font2)
         sheet.write_merge(6, 6, 2, 20, 'связи участка магистральной связи Донецькой дистанции  связи Донецкой железной дороги',font2)
         
         sheet.write_merge(8, 8, 1,9, 'Месяц/день недели',font3)
