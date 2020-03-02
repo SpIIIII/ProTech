@@ -17,8 +17,8 @@ class Punkt:
             self.delete()
             tk.messagebox.showinfo('Готово',f'Запись удаленa')
 
-    def test(self, event=None):
-        print('test', self.id, event)
+    def change(self, *args):
+        self.db.update_data(self.id, *args)
 
     def delete(self):
         self.db.delet_data(self.id)
@@ -37,7 +37,6 @@ class LinePunktsIterator:
         raise StopIteration
 
 class basePunkts:
-
     def __iter__(self)-> LinePunktsIterator:
         return LinePunktsIterator(self)
 

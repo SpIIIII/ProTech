@@ -27,8 +27,8 @@ class basePunktsWindow(tk.Toplevel):
 
         # Create a popup menu
         self.popup_menu = tk.Menu(self, tearoff=0)
-        self.popup_menu.add_command(label='Изменить', command=lambda:1)
-        self.popup_menu.add_command(label='Добавить', command=lambda:1)
+        self.popup_menu.add_command(label='Добавить', command=self.add_cert)
+        self.popup_menu.add_command(label='Изменить', command=self.change_cert)
         self.popup_menu.add_separator()
         self.popup_menu.add_command(label='Удалить', command=self.delete_cert)
 
@@ -67,14 +67,79 @@ class basePunktsWindow(tk.Toplevel):
             self.line_punkt_tree.delete(i)
         self.fill_certs_tree(equ, loc, exc, mth)
 
-    def fill_top_frame(self, version=0):
+    def fill_top_frame(self, version=0, punkt=None):
         for child in self.top_frame.winfo_children():
             child.destroy()
-
         if version == 0:
             self.fill_top_frame_regular(self.top_frame)
         elif version == 1:
             self.fill_top_frame_add(self.top_frame)
+        elif version == 2:
+            self.fill_top_frame_change(self.top_frame, punkt)
+
+    def fill_top_frame_change(self, frame:tk.Frame, punkt)-> None:  
+        # add equipment block
+        self.equipment_label = ttk.Label(frame, text="Оборудование") 
+        self.equipment_label.place(x=10, y=5)
+        
+        self.equipment_entry = ttk.Entry(frame)
+        self.equipment_entry.insert(0,punkt.equipment)
+        self.equipment_entry.place(x=10, y=23)
+
+        # add station block
+        self.location_label = ttk.Label(frame, text="Станция") 
+        self.location_label.place(x=110, y=5)
+        
+        self.location_entry = ttk.Entry(frame)
+        self.location_entry.insert(0, punkt.location)
+        self.location_entry.place(x=110, y=23)
+
+        # add executer block
+        executer_label = ttk.Label(frame, text="Исполнитель") 
+        executer_label.place(x=210, y=5)
+        
+        self.executer_entry = ttk.Entry(frame)
+        self.executer_entry.insert(0, punkt.executer)
+        self.executer_entry.place(x=210, y=23)
+
+        # sub function to calculation for month block
+        def month_pair(one=None, two=None):
+            if not two:
+                two = 6
+            if one:
+                return (one, one+6)
+            return (punkt.month, punkt.month+6)
+
+        # function to add month block
+        def post_month_comboboxes(start_pair):
+            month_start_label = ttk.Label(frame, text="Месяц") 
+            month_start_label.place(x=330, y=5)
+            self.month_start_combo = ttk.Combobox(frame, values=['Январь','Февраль','Март','Апрель','Май','Июнь'], justify='center')
+            self.month_start_combo.current(start_pair[0])
+            self.month_start_combo.place(x=330, y=23)
+            self.month_start_combo.bind('<<ComboboxSelected>>', lambda x:  post_month_comboboxes(month_pair(one=self.Month_assoc[self.month_start_combo.get()])))
+
+            month_finish_combo = ttk.Combobox(frame, values=['Июль','Август', 'Сентябрь','Октябрь','Ноябрь','Декабрь'], justify='center')
+            month_finish_combo.current(start_pair[1]-6)
+            month_finish_combo.place(x=330, y=43)
+            month_finish_combo.bind('<<ComboboxSelected>>', lambda x:  post_month_comboboxes(month_pair(two=self.Month_assoc[month_finish_combo.get()])))
+
+            # return month_start_combo, month_finish_combo
+        # add month block
+        post_month_comboboxes(month_pair())
+
+        # add conform button
+        add_button = ttk.Button(frame, text="Изменить", command=lambda:(punkt.change(self.equipment_entry.get(),
+                                                                                                self.location_entry.get(),
+                                                                                                self.executer_entry.get(),
+                                                                                                self.Month_assoc[self.month_start_combo.get()]),
+                                                                                self.LinePunkts.refresh(),
+                                                                                self.refresh_tree_view()))
+        add_button.place(x=470, y=20)
+
+        # add back button
+        back_button = ttk.Button(frame, text="Отмена", command=lambda: self.fill_top_frame(version=0))
+        back_button.place(x=470, y=43)
             
     def fill_top_frame_add(self, sub_top_frame):
         # configure styles to set tamplate text in entries
@@ -210,12 +275,21 @@ class basePunktsWindow(tk.Toplevel):
         else:
            pass
 
+    def add_cert(self):
+        self.fill_top_frame(version=1)
+
+    def change_cert(self):
+        item = self.line_punkt_tree.selection()[0]
+        punkt = self.LinePunkts.get_cert_by_id(self.line_punkt_tree.item(item,'tags')[0])
+        self.fill_top_frame(version=2, punkt=punkt)
+
     def delete_cert(self):
         item = self.line_punkt_tree.selection()[0]
         self.LinePunkts.get_cert_by_id(self.line_punkt_tree.item(item,'tags')[0]).GUI_delete()
         self.LinePunkts.refresh()
         self.refresh_tree_view()
 
+    
     # function to set template for equipment entry
     def equipment_entry_FocusIn(self,event):
         """function that gets called whenever entry is clicked"""
@@ -271,6 +345,8 @@ class LinePunkts(basePunktsWindow):
         self.Month_assoc_back = {0:'Январь', 1:'Февраль', 2:'Март', 3:'Апрель', 4:'Май', 5:'Июнь', 6:'Июль', 7:'Август',
                                                         8:'Сентябрь', 9:'Октябрь', 10:'Ноябрь', 11:'Декабрь'}
         self.init_certification_window()
+
+
 class Certifications(basePunktsWindow):
     def __init__(self, main):
         super().__init__ (main)
@@ -362,3 +438,59 @@ class Certifications(basePunktsWindow):
         # add back button
         back_button = ttk.Button(sub_top_frame, text="Назад", command=lambda: self.fill_top_frame(version=0))
         back_button.place(x=470, y=43)
+
+    def fill_top_frame_change(self, frame:tk.Frame, punkt)-> None:  
+        # add equipment block
+        self.equipment_label = ttk.Label(frame, text="Оборудование") 
+        self.equipment_label.place(x=10, y=5)
+        
+        self.equipment_entry = ttk.Entry(frame)
+        self.equipment_entry.insert(0,punkt.equipment)
+        self.equipment_entry.place(x=10, y=23)
+
+        # add station block
+        self.location_label = ttk.Label(frame, text="Станция") 
+        self.location_label.place(x=110, y=5)
+        
+        self.location_entry = ttk.Entry(frame)
+        self.location_entry.insert(0, punkt.location)
+        self.location_entry.place(x=110, y=23)
+
+        # add executer block
+        executer_label = ttk.Label(frame, text="Исполнитель") 
+        executer_label.place(x=210, y=5)
+        
+        self.executer_entry = ttk.Entry(frame)
+        self.executer_entry.insert(0, punkt.executer)
+        self.executer_entry.place(x=210, y=23)
+
+        # sub function to calculation for month block
+        def month_pair(one=None, two=None):
+            if not two:
+                two = 6
+            if one:
+                return (one, one+6)
+            return (punkt.month, punkt.month+6)
+
+        # add month block
+
+        month_start_label = ttk.Label(frame, text="Месяц") 
+        month_start_label.place(x=330, y=5)
+        self.month_start_combo = ttk.Combobox(frame, values=['Январь','Февраль','Март','Апрель','Май',
+                                                            'Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], justify='center')
+        self.month_start_combo.current(punkt.month)
+        self.month_start_combo.place(x=330, y=23)
+
+        # add conform button
+        add_button = ttk.Button(frame, text="Изменить", command=lambda:(punkt.change(self.equipment_entry.get(),
+                                                                                                self.location_entry.get(),
+                                                                                                self.executer_entry.get(),
+                                                                                                self.Month_assoc[self.month_start_combo.get()]),
+                                                                                self.LinePunkts.refresh(),
+                                                                                self.refresh_tree_view()))
+        add_button.place(x=470, y=20)
+
+        # add back button
+        back_button = ttk.Button(frame, text="Отмена", command=lambda: self.fill_top_frame(version=0))
+        back_button.place(x=470, y=43)
+ 

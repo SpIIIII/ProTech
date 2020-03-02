@@ -13,7 +13,7 @@ class base_DB:
 
     def update_data(self, id, equipment, localtion , executer , month):
         self.c.execute('''UPDATE certification SET equipment=?,  localtion = ?, executer = ?, 
-                            month = ?,  WHERE id = ?''',
+                            month = ?  WHERE id = ?''',
         (equipment, localtion, executer, month, id))
         self.conn.commit()
         
