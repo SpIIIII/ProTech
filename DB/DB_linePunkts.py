@@ -1,16 +1,7 @@
 
 import sqlite3
 
-class DB_certification:
-    def __init__(self):
-        self.conn=sqlite3.connect('certification.db')
-        self.c = self.conn.cursor()
-
-        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id INTEGER PRIMARY KEY, equipment text,
-                            localtion text, executer text, month int)''')
-        self.c.execute('''select * from certification''')
-        self.conn.commit()
-               
+class base_DB:
     def insert_data(self, equipment,  localtion , executer , month):
         self.c.execute('''INSERT INTO certification (equipment, localtion , executer , month) 
                           VALUES (?,?,?,?) ''', (equipment, localtion , executer , month))
@@ -32,3 +23,24 @@ class DB_certification:
 
     def __del__(self):     
         self.conn.close()
+
+
+class DB_linePunkts(base_DB):
+    def __init__(self):
+        self.conn=sqlite3.connect('linePunkts.db')
+        self.c = self.conn.cursor()
+
+        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id INTEGER PRIMARY KEY, equipment text,
+                            localtion text, executer text, month int)''')
+        self.c.execute('''select * from certification''')
+        self.conn.commit()
+               
+
+class DB_certifications(base_DB):
+    def __init__(self):
+        self.conn=sqlite3.connect('certifications.db')
+        self.c = self.conn.cursor()
+        self.c.execute('''CREATE TABLE IF NOT EXISTS certification (id INTEGER PRIMARY KEY, equipment text,
+                            localtion text, executer text, month int)''')
+        self.c.execute('''select * from certification''')
+        self.conn.commit()

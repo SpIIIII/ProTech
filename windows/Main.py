@@ -6,7 +6,7 @@ from . import Show_one_day, Show_punkt, Change_punkt, New_punkt, To_exel, Analys
 
 
 class Main(tk.Frame):
-    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter, Certifications):
+    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter, LinePunkts, Certifications):
         super().__init__(root)
         self.root = root
         self.Punkts = Punkts
@@ -14,6 +14,7 @@ class Main(tk.Frame):
         self.Updater = Updater
         self.Plot = Plot
         self.Outputter = Outputter
+        self.LinePunkts = LinePunkts
         self.Certifications = Certifications
 
         # sub windows        
@@ -35,8 +36,9 @@ class Main(tk.Frame):
         # Draw MenuBar
         menubar = tk.Menu()
         filemenu = tk.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Техпроцесс на линии", command=self.open_linepunkts)
+        filemenu.add_command(label='Паспортизация', command=self.open_certifications)
         filemenu.add_command(label="Добавить пункт", command=self.open_add_new_punkt)
-        filemenu.add_command(label="Паспортизация", command=self.open_certification)
         filemenu.add_command(label="Обновить список", command=self.refresh_tree_view)
         filemenu.add_command(label="Анализ", command=self.open_Analysis)
         filemenu.add_command(label="в Exel", command=self.open_To_Exel)
@@ -162,8 +164,11 @@ class Main(tk.Frame):
     def open_Show(self):
         Show_one_day.ShowOneDay(self)
 
-    def open_certification(self):
-        Certification_window.Certification(self)
+    def open_linepunkts(self):
+        Certification_window.LinePunkts(self)
+
+    def open_certifications(self):
+        Certification_window.Certifications(self)
 
     def open_Analysis(self):
         Analysis.Analysis(self)
