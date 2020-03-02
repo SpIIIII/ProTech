@@ -33,26 +33,28 @@ class Main(tk.Frame):
         main_frame = tk.Frame(bd=2)
         main_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        # Draw MenuBar
+        # Draw MenuBars
         menubar = tk.Menu()
-        filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Техпроцесс на линии", command=self.open_linepunkts)
-        filemenu.add_command(label='Паспортизация', command=self.open_certifications)
-        filemenu.add_command(label="Добавить пункт", command=self.open_add_new_punkt)
-        filemenu.add_command(label="Обновить список", command=self.refresh_tree_view)
-        filemenu.add_command(label="Анализ", command=self.open_Analysis)
-        filemenu.add_command(label="в Exel", command=self.open_To_Exel)
+        fileMenu = tk.Menu(menubar, tearoff=0)
+        fileMenu.add_command(label="Добавить пункт", command=self.open_add_new_punkt)
+        fileMenu.add_command(label="Обновить список", command=self.refresh_tree_view)
+        fileMenu.add_command(label="Анализ", command=self.open_Analysis)
+        fileMenu.add_command(label="в Exel", command=self.open_To_Exel)
+        fileMenu.add_separator()
+        fileMenu.add_command(label="Выход", command=self.root.quit)
         
-        filemenu.add_separator()
-        filemenu.add_command(label="Выход", command=self.root.quit)
+        otherPunktsMenu = tk.Menu(menubar, tearoff=0)
+        otherPunktsMenu.add_command(label="Техпроцесс на линии", command=self.open_linepunkts)
+        otherPunktsMenu.add_command(label='Паспортизация', command=self.open_certifications)
 
         programmenu = tk.Menu(menubar, tearoff=0)
         programmenu.add_command(label='Обновить программу', command=self.update)
         
-        menubar.add_cascade(label="Файл", menu=filemenu)
+        menubar.add_cascade(label="Файл", menu=fileMenu)
+        menubar.add_cascade(label="Подпункты", menu=otherPunktsMenu)
         menubar.add_cascade(label="Программа", menu=programmenu)
         self.root.config(menu=menubar)
-
+        
         # Draw Labels
         label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.Punkts.today_punkts(name_only=True)), bd=1, relief=tk.SUNKEN, anchor=tk.W)
         label_on_root.pack(side=tk.BOTTOM, fill =tk.X)

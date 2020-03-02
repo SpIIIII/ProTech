@@ -345,10 +345,10 @@ class Certifications(basePunktsWindow):
         # function to add month block
         month_start_label = ttk.Label(sub_top_frame, text="Месяц") 
         month_start_label.place(x=330, y=5)
-        month_start_combo = ttk.Combobox(sub_top_frame, values=['Январь','Февраль','Март','Апрель','Май',
+        self.month_start_combo = ttk.Combobox(sub_top_frame, values=['Январь','Февраль','Март','Апрель','Май',
                                                                 'Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'], justify='center')
-        month_start_combo.current(0)
-        month_start_combo.place(x=330, y=23)
+        self.month_start_combo.current(0)
+        self.month_start_combo.place(x=330, y=23)
 
         # add conform button
         add_button = ttk.Button(sub_top_frame, text="Добавить", command=lambda:(self.LinePunkts.add_cert(self.equipment_entry.get(),
