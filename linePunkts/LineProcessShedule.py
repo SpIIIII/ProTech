@@ -1,4 +1,5 @@
 import tkinter as tk
+from datetime import datetime
 
 class Punkt:
     def __init__(self, *args, db=None):
@@ -11,17 +12,23 @@ class Punkt:
     def __repr__(self):
         return f'Punkt({self.id}, {self.equipment}, {self. location}, {self.executer}, {self.month}, {self.db})'
 
+    def change(self, *args):
+        self.db.update_data(self.id, *args)
+
+    def delete(self):
+        self.db.delet_data(self.id)
+
     def GUI_delete(self):
         question = tk.messagebox.askquestion('Удаление',f'Вы собираетесь удалить запись.\nУдалить?')
         if question == 'yes':
             self.delete()
             tk.messagebox.showinfo('Готово',f'Запись удаленa')
 
-    def change(self, *args):
-        self.db.update_data(self.id, *args)
-
-    def delete(self):
-        self.db.delet_data(self.id)
+    def is_in_month(self, month:int)-> bool:
+        if self.month == month:
+            return True
+        else:
+            return False
 
 
 class LinePunktsIterator:
@@ -62,6 +69,10 @@ class basePunkts:
     def add_cert(self, *args):
         self.db_lp.insert_data(*args)
 
+    def month_punkts(self, target_date:datetime):
+        month = target_date.month-1
+        months = [punkt for punkt in self.all_punkts if punkt.is_in_month(month)]
+        return months
 
 class LinePunkts(basePunkts):
     def __init__(self, db_lp)-> None:

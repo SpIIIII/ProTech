@@ -4,7 +4,7 @@ import xlwt
 import os
 from typing import List
 from datetime import datetime
-
+from collections import Counter
 
 class Output:
     def __init__(self, punkts, linePunkts, certPunkts):
@@ -25,21 +25,41 @@ class Output:
     def forday_to_exel(self, date:datetime, *names:str)-> None:
         self.calculate_forday(date, *names)
                 
-    def calculate_operational(self, whatday:datetime, *names:str)-> None:
-        now = whatday
-        self.month_punkts: list = self.Punkts.month_punkts(now, annual=False)
-        self.annual_punkts: list = self.Punkts.month_punkts(now, annual=True)
-        self.create_operational_Exel(self.month_punkts,self.annual_punkts, now, *names)
+    def calculate_operational(self, target_date:datetime, *names:str)-> None:
+        target_date
+        month_punkts: list = self.Punkts.month_punkts(target_date, annual=False)
+        annual_punkts: list = self.Punkts.month_punkts(target_date, annual=True)
+        line_punkts: list = self.LinePunkts.month_punkts(target_date)
+        cert_punkts: list = self.CertPunkts.month_punkts(target_date)
+        self.create_operational_Exel(month_punkts, line_punkts, cert_punkts, annual_punkts, 
+                                    target_date, *names)
    
     def calculate_forday(self, whatday:datetime, *names:str)-> None:
         self.create_forday_Exel(whatday, *names)
     
-    def create_operational_Exel(self, dayPunkt: list, yearPunkt: list, date: datetime, *names)-> None:
-        self.x=1
-        self.y=1
-        self.z=0
+    def create_operational_Exel(self, dayPunkt:list, lineDayPunkt:list, certDayPunkt:list, 
+                                yearPunkt:list, date:datetime, *names)-> None:
+
+        def stack_punkts_by_location(line_punkts:list, text:str)-> list:
+            locations={}
+            executers=[]
+            for i in line_punkts:
+                if i.location in locations:
+                    locations[i.location].append(i.equipment)
+                else:
+                    locations[i.location] = [i.equipment]
+                    executers.append(i.executer)
+            
+            result = list(zip( [text.format(', '.join(j),i) for i,j in locations.items()], executers))
+            return result
+
+        x=1
+        z=0
         date_for_which = date
-        self.names = names
+        line_punkt_text = 'Выполнение технологического процесса на оборудовании {}, на сайте {}'
+        stacked_line_punkts = stack_punkts_by_location(lineDayPunkt, line_punkt_text)
+        cert_punkt_text = 'Выполнение паспортизации оборудования {} на сайте {}'
+        stacked_cert_punkts = stack_punkts_by_location(certDayPunkt, cert_punkt_text)
 
         # Создаем книку
         book = xlwt.Workbook('utf8')
@@ -57,34 +77,79 @@ class Output:
    
         # Добавляем лист
         sheet = book.add_sheet('sheetname',cell_overwrite_ok=True)
-        self.l=0
-        for i in dayPunkt:
-            sheet.row(self.z+14).height_mismatch = True
-            sheet.row(self.z+14).height = 1000
-            sheet.write_merge(self.z+14,self.z+14, 7, 8, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 9, 10, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 11, 11, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 12, 13, '',font3)
-            sheet.write_merge(self.z+14,self.z+14, 14, 14, '',font3)
-            self.z+=1
-            self.l+=1
+        l=0
 
-        sheet.write_merge(self.l+15,self.l+15, 1, 8, 'Составил: _____________ %s'%self.names[1],font2_1)
+        # устанавливаем размеры клеток, и рамку
+        for i in dayPunkt:
+            sheet.row(z+14).height_mismatch = True
+            sheet.row(z+14).height = 1000
+            sheet.write_merge(z+14,z+14, 7, 8, '',font3)
+            sheet.write_merge(z+14,z+14, 9, 10, '',font3)
+            sheet.write_merge(z+14,z+14, 11, 11, '',font3)
+            sheet.write_merge(z+14,z+14, 12, 13, '',font3)
+            sheet.write_merge(z+14,z+14, 14, 14, '',font3)
+            z+=1
+            l+=1
+        for i in stacked_line_punkts:
+            sheet.row(z+14).height_mismatch = True
+            sheet.row(z+14).height = 1000
+            sheet.write_merge(z+14,z+14, 1, 1, '',font3)
+            sheet.write_merge(z+14,z+14, 6, 6, '',font3)
+            sheet.write_merge(z+14,z+14, 7, 8, '',font3)
+            sheet.write_merge(z+14,z+14, 9, 10, '',font3)
+            sheet.write_merge(z+14,z+14, 11, 11, '',font3)
+            sheet.write_merge(z+14,z+14, 12, 13, '',font3)
+            sheet.write_merge(z+14,z+14, 14, 14, '',font3)
+            z+=1
+            l+=1
+        for i in stacked_cert_punkts:
+            sheet.row(z+14).height_mismatch = True
+            sheet.row(z+14).height = 1000
+            sheet.write_merge(z+14,z+14, 1, 1, '',font3)
+            sheet.write_merge(z+14,z+14, 6, 6, '',font3)
+            sheet.write_merge(z+14,z+14, 7, 8, '',font3)
+            sheet.write_merge(z+14,z+14, 9, 10, '',font3)
+            sheet.write_merge(z+14,z+14, 11, 11, '',font3)
+            sheet.write_merge(z+14,z+14, 12, 13, '',font3)
+            sheet.write_merge(z+14,z+14, 14, 14, '',font3)
+            z+=1
+            l+=1
+
+        sheet.write_merge(l+15,l+15, 1, 8, 'Составил: _____________ %s'%names[1],font2_1)
        
+        # Заполняем сами пункты
         for i in dayPunkt:
             # Заполняем ячейку число (Строка, Колонка, Текст, Шрифт)
-            sheet.write(self.x+13,1,str(dayPunkt[self.x-1][0]),font3)
-            sheet.write(self.x+13,12,'%s'%self.names[2],font3)
+            sheet.write(x+13,1,str(dayPunkt[x-1][0]),font3)
+            sheet.write(x+13,12,'%s'%names[2],font3)
 
-            # Заполняем ячейку номура пунктов (Строка, Колонка, Текст, Шрифт)
-            sheet.write_merge(self.x+13,self.x+13,2,5,str((dayPunkt[self.x-1][1])),font3)
+            # Заполняем ячейку номера пунктов (Строка, Колонка, Текст, Шрифт)
+            sheet.write_merge(x+13,x+13,2,5,str((dayPunkt[x-1][1])),font3)
 
             # Заполняем ячейку годовой пункт (Строка, Колонка, Текст, Шрифт)
-            sheet.write_merge(self.x+13, self.x+13, 6, 6, str(yearPunkt[self.x-1][1]),font3)
-            self.x+=1
+            sheet.write_merge(x+13, x+13, 6, 6, str(yearPunkt[x-1][1]),font3)
+            x+=1
+
+        # Заполняем пункты техпроцесса на линии
+        for punkt in stacked_line_punkts:
+            # Заполняем столбей Работ по графику
+            sheet.write_merge(x+13, x+13, 2, 5, punkt[0], font3)
+            # Заполняем столбец "Исполнитель"
+            sheet.write(x+13, 12, punkt[1], font3)
+            x+=1
+        
+        # Заполняем пункты паспортизации
+        for punkt in stacked_cert_punkts:
+            # Заполняем столбей Работ по графику
+            sheet.write_merge(x+13, x+13, 2, 5, punkt[0], font3)
+            # Заполняем столбец "Исполнитель"
+            sheet.write(x+13, 12, punkt[1], font3)
+            x+=1
+
+
                     
-        #sheet.row(12).height = 20000
-        sheet.write_merge(1, 1, 1, 7, 'Утверждаю: ________________%s'%self.names[0], font1)
+        # Заполняем шапку
+        sheet.write_merge(1, 1, 1, 7, 'Утверждаю: ________________%s'%names[0], font1)
         sheet.write_merge(2, 2, 1, 5, '«__»_____________ %i г.'%date_for_which.year ,font1)
         sheet.write_merge(5, 5, 6, 8, 'Оперативный план',font2)
         sheet.write_merge(6, 6, 4, 10, 'работы на %s месяц %i года'%(self.month_association_back[date_for_which.month], date_for_which.year), font2)
@@ -121,6 +186,8 @@ class Output:
         #  Сохраняем в файл
         #print(self.desktop+'/Оперативный %s %i.xls'%(self.combox_month.get(),self.now1.year))
         book.save(self.desktop+'/Оперативный %s %i.xls'%(self.month_association_back[date_for_which.month], date_for_which.year))
+
+
 
     def create_forday_Exel(self,nowWithMonth, *names):
         day_for_which = nowWithMonth
