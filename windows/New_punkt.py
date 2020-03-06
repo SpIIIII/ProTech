@@ -79,6 +79,7 @@ class New_Punkt(tk.Toplevel):
         style.configure("Red.TEntry", foreground="gray")
         style = ttk.Style()
         style.configure("Black.TEntry", foreground="black")
+        
         self.weekday = tk.StringVar()
         self.whatday = tk.StringVar()
         self.whatnumber = tk.StringVar()
@@ -102,8 +103,8 @@ class New_Punkt(tk.Toplevel):
         label_desctiption = tk.Label(self, background = "white", text="Описание")
         label_desctiption.grid(row=9, column=1, sticky=tk.W, pady=3)
 
-        self.entry_de1=ttk.Entry(self,textvariable =self.whatnumber)
-        self.entry_de1.insert(0,'п 1.5 ')
+        self.entry_de1 = ttk.Entry(self, textvariable =self.whatnumber)
+        self.entry_de1.insert(0, 'п 1.5 ')
         self.entry_de1.bind('<FocusIn>', self.on_entry_click)
         self.entry_de1.bind('<FocusOut>', self.on_focusout)
         self.entry_de1.configure(style="Red.TEntry")

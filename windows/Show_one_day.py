@@ -15,7 +15,7 @@ class ShowOneDay(tk.Toplevel):
         return '\n'.join(textwrap.wrap(string, lenght))
 
     def show_onedaypunkt (self):
-        self.title("Вывести в Exel")
+        self.title("Сегодняшние пункты")
         self.geometry("500x600")
 
         self.style = ttk.Style(self)

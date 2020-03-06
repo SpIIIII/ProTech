@@ -2,11 +2,11 @@ import tkinter as tk
 import config
 import datetime
 from tkinter import ttk
-from . import Show_one_day, Change_punkt, New_punkt, To_exel, Analysis, Show_punkt
+from . import Show_one_day, Show_punkt, Change_punkt, New_punkt, To_exel, Analysis, Certification_window
 
 
 class Main(tk.Frame):
-    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter):
+    def __init__ (self, root, Punkts, Veison, Updater, Plot, Outputter, LinePunkts, Certifications):
         super().__init__(root)
         self.root = root
         self.Punkts = Punkts
@@ -14,6 +14,8 @@ class Main(tk.Frame):
         self.Updater = Updater
         self.Plot = Plot
         self.Outputter = Outputter
+        self.LinePunkts = LinePunkts
+        self.Certifications = Certifications
 
         # sub windows        
         self.change_punkt = Change_punkt.Change
@@ -31,24 +33,28 @@ class Main(tk.Frame):
         main_frame = tk.Frame(bd=2)
         main_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        # Draw MenuBar
+        # Draw MenuBars
         menubar = tk.Menu()
-        filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Добавить пункт", command=self.open_add_new_punkt)
-        filemenu.add_command(label="Обновить список", command=self.refresh_tree_view)
-        filemenu.add_command(label="Анализ", command=self.open_Analysis)
-        filemenu.add_command(label="в Exel", command=self.open_To_Exel)
+        fileMenu = tk.Menu(menubar, tearoff=0)
+        fileMenu.add_command(label="Добавить пункт", command=self.open_add_new_punkt)
+        fileMenu.add_command(label="Обновить список", command=self.refresh_tree_view)
+        fileMenu.add_command(label="Анализ", command=self.open_Analysis)
+        fileMenu.add_command(label="в Exel", command=self.open_To_Exel)
+        fileMenu.add_separator()
+        fileMenu.add_command(label="Выход", command=self.root.quit)
         
-        filemenu.add_separator()
-        filemenu.add_command(label="Выход", command=self.root.quit)
+        otherPunktsMenu = tk.Menu(menubar, tearoff=0)
+        otherPunktsMenu.add_command(label="Техпроцесс на линии", command=self.open_linepunkts)
+        otherPunktsMenu.add_command(label='Паспортизация', command=self.open_certifications)
 
         programmenu = tk.Menu(menubar, tearoff=0)
         programmenu.add_command(label='Обновить программу', command=self.update)
         
-        menubar.add_cascade(label="Файл", menu=filemenu)
+        menubar.add_cascade(label="Файл", menu=fileMenu)
+        menubar.add_cascade(label="Подпункты", menu=otherPunktsMenu)
         menubar.add_cascade(label="Программа", menu=programmenu)
         self.root.config(menu=menubar)
-
+        
         # Draw Labels
         label_on_root=tk.Label(main_frame, text=' Сегодня: '+''.join(self.Punkts.today_punkts(name_only=True)), bd=1, relief=tk.SUNKEN, anchor=tk.W)
         label_on_root.pack(side=tk.BOTTOM, fill =tk.X)
@@ -112,7 +118,7 @@ class Main(tk.Frame):
        
     def fill_tree_view(self):
         for row in self.Punkts.re_read():
-            self.tree.insert('', 'end', values=(row.name,row.description,row.period,row.day_of_week))
+            self.tree.insert('', 'end', values=(row.name, row.description, row.period, row.day_of_week))
         
     def refresh_tree_view(self):
         for i in self.tree.get_children():
@@ -159,6 +165,12 @@ class Main(tk.Frame):
 
     def open_Show(self):
         Show_one_day.ShowOneDay(self)
+
+    def open_linepunkts(self):
+        Certification_window.LinePunkts(self)
+
+    def open_certifications(self):
+        Certification_window.Certifications(self)
 
     def open_Analysis(self):
         Analysis.Analysis(self)

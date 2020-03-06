@@ -102,4 +102,4 @@ class Analysis(tk.Toplevel):
             self.focus_set()
 
     def open_show_punkt(self):
-        self.main.Show_punkt(self.main,self.Punkts.get_punkt(self.combox_punkts.get()))
+        self.main.Show_punkt(self.main, self.Punkts.get_punkt(self.combox_punkts.get()))
