@@ -67,6 +67,16 @@ class Change(tk.Toplevel):
         self.entry_obor.insert(0,self.chengebl_punkt.equipment)
         self.entry_obor.place(x=100, y=140)
 
+        # draw entry for week day
+        self.lable_punkt = tk.Label(self, bg='white', text="День недели")
+        self.lable_punkt.place(x=240, y=20)
+        self.combobox2 = ttk.Combobox(self, values=[u' пн.',u' вт.',u' ср.',u' чт.',u' пт.'])
+        self.combobox2.current(association[self.chengebl_punkt.day_of_week])
+        self.combobox2.place(x=360, y=20)
+
+        self.comboboxYear=ttk.Combobox(self,values=[u' Январь',u' Февраль',u' Март',u' Апрель',u' Май',u' Июнь',u' Июль',u' Август', u' Сентябрь',u' Октябрь',u' Ноябрь',u' Декабрь'])
+        self.comboboxYear.current(associationforMonth[self.chengebl_punkt.month])
+
         # draw entry for periodic entry according to the punkt period
         if self.chengebl_punkt.period == ' ежедневно' or self.chengebl_punkt.period==' раз в неделю' or self.chengebl_punkt.period==' раз в 2 недели' or self.chengebl_punkt.period==' раз в 4 недели':
             self.lable_punkt = tk.Label(self, bg='white', text="Периодичность")
@@ -87,16 +97,6 @@ class Change(tk.Toplevel):
             self.combobox1.current(association_cicle[self.chengebl_punkt.period]-4)
             self.combobox1.place(x=360, y=50)
 
-        # draw entry for week day
-        self.lable_punkt = tk.Label(self, bg='white', text="День недели")
-        self.lable_punkt.place(x=240, y=20)
-        self.combobox2 = ttk.Combobox(self, values=[u' пн.',u' вт.',u' ср.',u' чт.',u' пт.'])
-        self.combobox2.current(association[self.chengebl_punkt.day_of_week])
-        self.combobox2.place(x=360, y=20)
-
-        self.comboboxYear=ttk.Combobox(self,values=[u' Январь',u' Февраль',u' Март',u' Апрель',u' Май',u' Июнь',u' Июль',u' Август', u' Сентябрь',u' Октябрь',u' Ноябрь',u' Декабрь'])
-        self.comboboxYear.current(associationforMonth[self.chengebl_punkt.month])
-
         # draw entry for shift value
         self.label_shift = tk.Label(self, bg='white',text="Сдвинуть на")
         self.label_shift.place(x=290, y=140)
@@ -107,9 +107,14 @@ class Change(tk.Toplevel):
         self.label_shift2.place(x=460, y=140)
 
         # check box for active status
+        ## set style with white background
+        style = ttk.Style()
+        style.configure("Red.TCheckbutton", background="white")
+
         self.is_active = IntVar()
         self.is_active.set(self.chengebl_punkt.active)
-        is_acitve_box = ttk.Checkbutton(self, text='активен', variable=self.is_active)
+        is_acitve_box = ttk.Checkbutton(self, text='активен', variable=self.is_active, )
+        is_acitve_box.configure(style='Red.TCheckbutton')
         is_acitve_box.place(x=380, y=170)
 
         # allow copy past to description entry while in russian
@@ -139,7 +144,7 @@ class Change(tk.Toplevel):
                                                                         self.is_active.get())
                                                                         )
         button_cancel= ttk.Button(self, text='close', command=self.destroy)
-        button_cancel.place(x=130,y =320
+        button_cancel.place(x=130,y =320)
 
         # some tkinter staff to focus only curend window                               
         self.wait_visibility()
