@@ -3,7 +3,7 @@ from datetime import datetime
 
 class Punkt:
     def __init__(self, *args, db=None):
-        self.id, self.equipment, self.location, self.executer, self.month = args[0]
+        self.id, self.equipment, self.location, self.executer, self.month, self.active = args[0]
         self.db=db
 
     def __str__(self):

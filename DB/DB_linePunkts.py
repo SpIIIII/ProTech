@@ -21,8 +21,18 @@ class base_DB:
         self.c.execute('''SELECT * FROM certification WHERE id =?''',(num,))
         return self.c.fetchall()
 
-    def __del__(self):     
-        self.conn.close()
+    def update(self)-> None:
+        '''update table if needed'''
+        self.c.execute('''PRAGMA table_info('certification')''')
+        x = self.c.fetchall()
+        if not 'active' in [i[1] for i in x]:
+            self.c.execute('''ALTER TABLE certification ADD COLUMN active DEFAULT 1''')
+            self.conn.commit()
+        else:
+            pass 
+
+
+        
 
 
 class DB_linePunkts(base_DB):
@@ -34,6 +44,7 @@ class DB_linePunkts(base_DB):
                             localtion text, executer text, month int)''')
         self.c.execute('''select * from certification''')
         self.conn.commit()
+        self.update()
                
 
 class DB_certifications(base_DB):
@@ -44,3 +55,4 @@ class DB_certifications(base_DB):
                             localtion text, executer text, month int)''')
         self.c.execute('''select * from certification''')
         self.conn.commit()
+        self.update()
