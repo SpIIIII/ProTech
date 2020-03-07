@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import tix
+from tkinter import IntVar
 
 
 class basePunktsWindow(tk.Toplevel):      
@@ -131,18 +131,25 @@ class basePunktsWindow(tk.Toplevel):
         # add month block
         post_month_comboboxes(month_pair())
 
+        #add active_check checkbx
+        is_active = IntVar()
+        is_active.set(punkt.active)
+        is_active_box = ttk.Checkbutton(frame, text='активен',variable=is_active)
+        is_active_box.place(x=10, y = 38)
+
         # add conform button
         add_button = ttk.Button(frame, text="Изменить", command=lambda:(punkt.change(self.equipment_entry.get(),
                                                                                                 self.location_entry.get(),
                                                                                                 self.executer_entry.get(),
-                                                                                                self.Month_assoc[self.month_start_combo.get()]),
+                                                                                                self.Month_assoc[self.month_start_combo.get()],
+                                                                                                is_active.get()),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=500, y=20)
+        add_button.place(x=500, y=15)
 
         # add back button
         back_button = ttk.Button(frame, text="Отмена", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=500, y=43)
+        back_button.place(x=500, y=38)
             
     def fill_top_frame_add(self, sub_top_frame):
         # configure styles to set tamplate text in entries
@@ -216,11 +223,11 @@ class basePunktsWindow(tk.Toplevel):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=500, y=20)
+        add_button.place(x=500, y=15)
 
         # add back button
         back_button = ttk.Button(sub_top_frame, text="Назад", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=500, y=43)
+        back_button.place(x=500, y=38)
 
     def fill_top_frame_regular(self, frame:tk.Frame)-> None:
 
@@ -436,11 +443,11 @@ class Certifications(basePunktsWindow):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=500, y=20)
+        add_button.place(x=500, y=15)
 
         # add back button
         back_button = ttk.Button(sub_top_frame, text="Назад", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=500, y=43)
+        back_button.place(x=500, y=38)
 
     def fill_top_frame_change(self, frame:tk.Frame, punkt)-> None:  
         # add equipment block
@@ -491,9 +498,9 @@ class Certifications(basePunktsWindow):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=500, y=20)
+        add_button.place(x=500, y=15)
 
         # add back button
         back_button = ttk.Button(frame, text="Отмена", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=500, y=43)
+        back_button.place(x=500, y=38)
  

@@ -40,7 +40,7 @@ if __name__ ==  "__main__":
     app = Main.Main(root, Punkts, Version, Updater, Plot, Outputter, LinePunkts, CertPunkts)
     app.pack()
     root.title("Техпроцесс ")
-    root.geometry("580x350+300+220")
+    root.geometry("580x358+300+220")
     #root.resizable(False,False)
     
     root.minsize(580,350)
