@@ -16,6 +16,9 @@ class Punkt:
         return False
         
     def is_today(self, date, annual=None)-> bool:
+        if not self.active:
+            return False
+            
         date_to_check = date        
         weekday=(date_to_check.weekday())
         month = date.month       

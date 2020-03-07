@@ -25,6 +25,8 @@ class Punkt:
             tk.messagebox.showinfo('Готово',f'Запись удаленa')
 
     def is_in_month(self, month:int)-> bool:
+        if not self.active:
+            return False
         if self.month == month:
             return True
         else:
