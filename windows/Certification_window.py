@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import tix
 
 
 class basePunktsWindow(tk.Toplevel):      
@@ -37,17 +38,19 @@ class basePunktsWindow(tk.Toplevel):
 
     def fill_bottom_frame(self):
         # create and fill tree view
-        self.line_punkt_tree = ttk.Treeview(self.bottom_frame, columns=( 'equipment', 'location', 'executer', 'month'), height=15, show='headings')
+        self.line_punkt_tree = ttk.Treeview(self.bottom_frame, columns=( 'equipment', 'location', 'executer', 'month', 'active'), height=15, show='headings')
 
         self.line_punkt_tree.column('equipment', width=60, anchor=tk.CENTER)
         self.line_punkt_tree.column('location', width=60, anchor=tk.E)
         self.line_punkt_tree.column('executer', width=200, anchor=tk.CENTER)
         self.line_punkt_tree.column('month', width=100, anchor=tk.CENTER)
+        self.line_punkt_tree.column('active', width=7, anchor=tk.CENTER)
 
         self.line_punkt_tree.heading('equipment', text='Оборудование')
         self.line_punkt_tree.heading('location', text='Станция')
         self.line_punkt_tree.heading('executer', text='Исполнитель')
         self.line_punkt_tree.heading('month', text='Месяц')
+        self.line_punkt_tree.heading('active', text='')
         self.line_punkt_tree.bind('<Button-3>',self.drop_popup_menu)
         # self.line_punkt_tree.bind("<Double-1>", self.show_punkt)
         self.line_punkt_tree.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
@@ -59,7 +62,7 @@ class basePunktsWindow(tk.Toplevel):
         for punkt in self.LinePunkts:
             if (punkt.equipment==equ or not equ ) and (punkt.location==loc or not loc) and (punkt.executer==exc or not exc) and (self.Month_assoc_back[punkt.month]==mth or not mth):
                 self.line_punkt_tree.insert('', 'end', values=(punkt.equipment, punkt.location, punkt.executer, 
-                                                        self.Month_assoc_back[punkt.month]+', '+self.Month_assoc_back[punkt.month+6]), 
+                                                        self.Month_assoc_back[punkt.month]+', '+self.Month_assoc_back[punkt.month+6], u"\u2713" if  punkt.active else ''), 
                                                         tags=(punkt.id,))
     
     def refresh_tree_view(self, equ='Все', loc='Все', exc='Все', mth='Все'):
@@ -135,11 +138,11 @@ class basePunktsWindow(tk.Toplevel):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=470, y=20)
+        add_button.place(x=500, y=20)
 
         # add back button
         back_button = ttk.Button(frame, text="Отмена", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=470, y=43)
+        back_button.place(x=500, y=43)
             
     def fill_top_frame_add(self, sub_top_frame):
         # configure styles to set tamplate text in entries
@@ -213,11 +216,11 @@ class basePunktsWindow(tk.Toplevel):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=470, y=20)
+        add_button.place(x=500, y=20)
 
         # add back button
         back_button = ttk.Button(sub_top_frame, text="Назад", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=470, y=43)
+        back_button.place(x=500, y=43)
 
     def fill_top_frame_regular(self, frame:tk.Frame)-> None:
 
@@ -433,11 +436,11 @@ class Certifications(basePunktsWindow):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=470, y=20)
+        add_button.place(x=500, y=20)
 
         # add back button
         back_button = ttk.Button(sub_top_frame, text="Назад", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=470, y=43)
+        back_button.place(x=500, y=43)
 
     def fill_top_frame_change(self, frame:tk.Frame, punkt)-> None:  
         # add equipment block
@@ -488,9 +491,9 @@ class Certifications(basePunktsWindow):
                                                                                                 self.Month_assoc[self.month_start_combo.get()]),
                                                                                 self.LinePunkts.refresh(),
                                                                                 self.refresh_tree_view()))
-        add_button.place(x=470, y=20)
+        add_button.place(x=500, y=20)
 
         # add back button
         back_button = ttk.Button(frame, text="Отмена", command=lambda: self.fill_top_frame(version=0))
-        back_button.place(x=470, y=43)
+        back_button.place(x=500, y=43)
  
