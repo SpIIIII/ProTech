@@ -3,7 +3,7 @@ from datetime import datetime
 
 class Punkt:
     def __init__(self, *args, db=None):
-        self.id, self.equipment, self.location, self.executer, self.month = args[0]
+        self.id, self.equipment, self.location, self.executer, self.month, self.active = args[0]
         self.db=db
 
     def __str__(self):
@@ -25,6 +25,8 @@ class Punkt:
             tk.messagebox.showinfo('Готово',f'Запись удаленa')
 
     def is_in_month(self, month:int)-> bool:
+        if not self.active:
+            return False
         if self.month == month:
             return True
         else:

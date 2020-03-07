@@ -61,17 +61,19 @@ class Main(tk.Frame):
         label_on_root.bind('<Button-1>', lambda e:self.open_Show())
         
         # Draw TreeView      
-        self.tree=ttk.Treeview(main_frame, columns =('ID', 'description', 'day', 'month'), height=15, show='headings')
+        self.tree=ttk.Treeview(main_frame, columns =('ID', 'description', 'day', 'month', 'active'), height=15, show='headings')
        
-        self.tree.column('ID', width=80, anchor=tk.CENTER)
-        self.tree.column('description', width=350, anchor=tk.E)
-        self.tree.column('day', width=100, anchor=tk.CENTER)
+        self.tree.column('ID', width=75, anchor=tk.CENTER)
+        self.tree.column('description', width=350, anchor=tk.W)
+        self.tree.column('day', width=95, anchor=tk.CENTER)
         self.tree.column('month', width=50, anchor=tk.CENTER)
+        self.tree.column('active', width=8, anchor=tk.CENTER)
         
         self.tree.heading('ID', text='номер')
         self.tree.heading('description', text='краткое описание')
         self.tree.heading('day', text='переодичность')
         self.tree.heading('month', text='день')
+        self.tree.heading('active', text='')
         self.tree.bind('<Button-3>',self.drop_popup_menu)
         self.tree.bind("<Double-1>", self.show_punkt)
         self.tree.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
@@ -117,8 +119,8 @@ class Main(tk.Frame):
         self.refresh_tree_view()
        
     def fill_tree_view(self):
-        for row in self.Punkts.re_read():
-            self.tree.insert('', 'end', values=(row.name, row.description, row.period, row.day_of_week))
+        for punkt in self.Punkts.re_read():
+            self.tree.insert('', 'end', values=(punkt.name, punkt.description, punkt.period, punkt.day_of_week,  u"\u2713" if  punkt.active else ''))
         
     def refresh_tree_view(self):
         for i in self.tree.get_children():

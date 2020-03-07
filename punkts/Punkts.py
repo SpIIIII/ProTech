@@ -7,8 +7,8 @@ from typing import List
 class Punkt:
     def __init__(self, *args, db=None)-> None:
         self.db = db
-        self.name,self.description,self.period,self.day_of_week,self.month,self.instruction,\
-        self.order,self.responsible,self.equipment,self.shift_week = args[0]
+        self.name, self.description, self.period, self.day_of_week, self.month, self.instruction,\
+        self.order, self.responsible, self.equipment, self.shift_week, self.active = args[0]
 
     def is_annual (self)-> bool:
         if self.period == ' раз 12 месяцев' or self.period == ' раз в 6 месяцев' or self.period == ' раз в 3 месяца':
@@ -16,6 +16,9 @@ class Punkt:
         return False
         
     def is_today(self, date, annual=None)-> bool:
+        if not self.active:
+            return False
+            
         date_to_check = date        
         weekday=(date_to_check.weekday())
         month = date.month       

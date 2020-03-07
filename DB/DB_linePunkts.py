@@ -11,18 +11,28 @@ class base_DB:
         self.c.execute('''DELETE FROM certification WHERE id =? ''', (id,))
         self.conn.commit()
 
-    def update_data(self, id, equipment, localtion , executer , month):
+    def update_data(self, id, equipment, localtion , executer , month, active):
         self.c.execute('''UPDATE certification SET equipment=?,  localtion = ?, executer = ?, 
-                            month = ?  WHERE id = ?''',
-        (equipment, localtion, executer, month, id))
+                            month = ?, active = ?  WHERE id = ?''',
+        (equipment, localtion, executer, month, active, id))
         self.conn.commit()
         
     def read_data(self,num):
         self.c.execute('''SELECT * FROM certification WHERE id =?''',(num,))
         return self.c.fetchall()
 
-    def __del__(self):     
-        self.conn.close()
+    def update_table(self)-> None:
+        '''update table if needed'''
+        self.c.execute('''PRAGMA table_info('certification')''')
+        x = self.c.fetchall()
+        if not 'active' in [i[1] for i in x]:
+            self.c.execute('''ALTER TABLE certification ADD COLUMN active DEFAULT 1''')
+            self.conn.commit()
+        else:
+            pass 
+
+
+        
 
 
 class DB_linePunkts(base_DB):
@@ -34,6 +44,7 @@ class DB_linePunkts(base_DB):
                             localtion text, executer text, month int)''')
         self.c.execute('''select * from certification''')
         self.conn.commit()
+        self.update_table()
                
 
 class DB_certifications(base_DB):
@@ -44,3 +55,4 @@ class DB_certifications(base_DB):
                             localtion text, executer text, month int)''')
         self.c.execute('''select * from certification''')
         self.conn.commit()
+        self.update_table()
