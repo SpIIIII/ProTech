@@ -5,6 +5,7 @@ shedule in xsl format within one click. I tried to make interface as intuitive a
   ![alt text](https://github.com/SpIIIII/ProTech/blob/develop/media/screenshots/Untitled_5.jpg)
   
  - The app is self updatable
+ 
   ![alt text](https://github.com/SpIIIII/ProTech/blob/develop/media/screenshots/Untitled_2.jpg)
   
  - Has separate windows to work with separate classes of lists
